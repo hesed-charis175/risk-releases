@@ -50,6 +50,25 @@ rm -rf "$TMP_STD"
 
 success "Standard library installed to $STDLIB_DIR"
 
+info "Compiling standard library..."
+MANIFEST="$STDLIB_DIR/manifest"
+if [ ! -f "$MANIFEST" ]; then
+  error "Stdlib manifest not found at $MANIFEST"
+fi
+
+while IFS= read -r line || [ -n "$line" ]; do
+  [[ -z "$line" || "$line" == \#* ]] && continue
+  TARGET="$STDLIB_DIR/$line"
+  if [ ! -f "$TARGET" ]; then
+    info "Warning: $TARGET not found, skipping"
+    continue
+  fi
+  info "  compiling $line..."
+  riskc "$TARGET" || error "Failed to compile $line"
+done < "$MANIFEST"
+
+success "Standard library compiled"
+
 if command -v riskc &>/dev/null; then
   success "riskc is ready. Run: riskc --version"
 else
