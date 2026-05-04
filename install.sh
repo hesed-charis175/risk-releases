@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-REPO="hesed-charis175/risk-releases"  
+REPO="hesed-charis175/risk-releases"   
 VERSION="latest"
 BINARY_NAME="riskc"
 INSTALL_DIR="/usr/local/bin"
@@ -34,7 +34,10 @@ tar -xzf "$TMP_DIR/riskc.tar.gz" -C "$TMP_DIR"
 chmod +x "$TMP_DIR/riskc"
 
 info "Installing to $INSTALL_DIR/$BINARY_NAME (requires sudo)..."
-sudo mv "$TMP_DIR/riskc" "$INSTALL_DIR/$BINARY_NAME" \
+SUDO=""
+if [ "$(id -u)" != "0" ]; then SUDO="sudo"; fi
+
+$SUDO mv "$TMP_DIR/riskc" "$INSTALL_DIR/$BINARY_NAME" \
   || error "Failed to install binary. Do you have sudo access?"
 rm -rf "$TMP_DIR"
 
