@@ -15,52 +15,64 @@ RESET="\033[0m"
 info()    { echo -e "${BOLD}[~]${RESET} $1"; }
 success() { echo -e "${GREEN}[=]${RESET} $1"; }
 error()   { echo -e "${RED}[X]${RESET} $1"; exit 1; }
-
 ARCH=$(uname -m)
 if [ "$ARCH" != "x86_64" ]; then
   error "Unsupported architecture: $ARCH. Only x86_64 is supported right now."
 fi
 
+info "Ensuring gcc is installed..."
+SUDO=""
+if [ "$(id -u)" != "0" ]; then SUDO="sudo"; fi
+
+if command -v apt-get &>/dev/null; then
+  $SUDO apt-get update -qq
+  $SUDO apt-get install -y gcc
+elif command -v dnf &>/dev/null; then
+  $SUDO dnf install -y gcc
+elif command -v yum &>/dev/null; then
+  $SUDO yum install -y gcc
+elif command -v pacman &>/dev/null; then
+  $SUDO pacman -Sy --noconfirm gcc
+elif command -v apk &>/dev/null; then
+  $SUDO apk add --no-cache gcc musl-dev
+elif command -v brew &>/dev/null; then
+  brew install gcc
+else
+  error "No supported package manager found. Please install gcc manually and re-run."
+fi
+
+if ! command -v gcc &>/dev/null; then
+  error "gcc installation failed. Please install it manually and re-run."
+fi
+success "gcc is ready ($(gcc --version | head -1))"
+
 BASE_URL="https://github.com/$REPO/releases/latest/download"
 BINARY_URL="$BASE_URL/riskc-linux-x86_64.tar.gz"
 STDLIB_URL="$BASE_URL/risk-stdlib.tar.gz"
-
 info "Downloading riskc..."
 TMP_DIR=$(mktemp -d)
 curl -fsSL "$BINARY_URL" -o "$TMP_DIR/riskc.tar.gz" \
   || error "Failed to download binary. Check your connection or the release URL."
-
 tar -xzf "$TMP_DIR/riskc.tar.gz" -C "$TMP_DIR"
 chmod +x "$TMP_DIR/riskc"
-
 info "Installing to $INSTALL_DIR/$BINARY_NAME (requires sudo)..."
-SUDO=""
-if [ "$(id -u)" != "0" ]; then SUDO="sudo"; fi
-
 $SUDO mv "$TMP_DIR/riskc" "$INSTALL_DIR/$BINARY_NAME" \
   || error "Failed to install binary. Do you have sudo access?"
 rm -rf "$TMP_DIR"
-
 success "riskc installed to $INSTALL_DIR/$BINARY_NAME"
-
 info "Installing standard library to $STDLIB_DIR..."
 mkdir -p "$STDLIB_DIR"
-
 TMP_STD=$(mktemp -d)
 curl -fsSL "$STDLIB_URL" -o "$TMP_STD/stdlib.tar.gz" \
   || error "Failed to download standard library."
-
 tar -xzf "$TMP_STD/stdlib.tar.gz" -C "$STDLIB_DIR" --strip-components=1
 rm -rf "$TMP_STD"
-
 success "Standard library installed to $STDLIB_DIR"
-
 info "Compiling standard library..."
 MANIFEST="$STDLIB_DIR/manifest"
 if [ ! -f "$MANIFEST" ]; then
   error "Stdlib manifest not found at $MANIFEST"
 fi
-
 while IFS= read -r line || [ -n "$line" ]; do
   [[ -z "$line" || "$line" == \#* ]] && continue
   TARGET="$STDLIB_DIR/$line"
@@ -71,16 +83,12 @@ while IFS= read -r line || [ -n "$line" ]; do
   info "  compiling $line..."
   RISK_STDLIB="$STDLIB_DIR" riskc "$TARGET" || error "Failed to compile $line"
 done < "$MANIFEST"
-
 success "Standard library compiled"
-
 if ! grep -qF "RISK_STDLIB" /etc/environment 2>/dev/null; then
   echo "RISK_STDLIB=$STDLIB_DIR" | $SUDO tee -a /etc/environment > /dev/null
   info "RISK_STDLIB set in /etc/environment"
 fi
-
 export RISK_STDLIB="$STDLIB_DIR"
-
 if command -v riskc &>/dev/null; then
   success "riskc is ready. Docs: https://risk-releases.pages.dev"
 else
