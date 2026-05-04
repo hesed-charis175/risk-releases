@@ -20,7 +20,7 @@ riskc path/to/file.risk
 
 ## Docs
 
-[hesed-charis175.github.io/risk-releases](https://hesed-charis175.github.io/risk-releases)
+[risk-releases.pages.dev](https://risk-releases.pages.dev)
 
 ## Standard library
 

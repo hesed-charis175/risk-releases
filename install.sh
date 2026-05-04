@@ -83,7 +83,7 @@ fi
 export RISK_STDLIB="$STDLIB_DIR"
 
 if command -v riskc &>/dev/null; then
-  success "riskc is ready. Run: riskc --version"
+  success "riskc is ready. Docs: https://risk-releases.pages.dev"
 else
   echo ""
   info "riskc was installed but is not in your PATH."
