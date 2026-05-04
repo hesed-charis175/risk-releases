@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-REPO="hesed-charis175/risk-releases" 
+REPO="hesed-charis175/risk-releases"   
 VERSION="latest"
 BINARY_NAME="riskc"
 INSTALL_DIR="/usr/local/bin"
@@ -74,18 +74,10 @@ done < "$MANIFEST"
 
 success "Standard library compiled"
 
-# Set RISK_STDLIB in shell config
-SHELL_CONFIG="$HOME/.bashrc"
-if [ -n "$ZSH_VERSION" ] || [ "$SHELL" = "/bin/zsh" ]; then
-  SHELL_CONFIG="$HOME/.zshrc"
-fi
-
-EXPORT_LINE="export RISK_STDLIB=\"$STDLIB_DIR\""
-if ! grep -qF "$EXPORT_LINE" "$SHELL_CONFIG" 2>/dev/null; then
-  echo "" >> "$SHELL_CONFIG"
-  echo "# Risk language stdlib" >> "$SHELL_CONFIG"
-  echo "$EXPORT_LINE" >> "$SHELL_CONFIG"
-  info "RISK_STDLIB set in $SHELL_CONFIG"
+# Set RISK_STDLIB system-wide
+if ! grep -qF "RISK_STDLIB" /etc/environment 2>/dev/null; then
+  echo "RISK_STDLIB=$STDLIB_DIR" | $SUDO tee -a /etc/environment > /dev/null
+  info "RISK_STDLIB set in /etc/environment"
 fi
 
 export RISK_STDLIB="$STDLIB_DIR"
