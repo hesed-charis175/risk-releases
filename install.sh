@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-REPO="hesed-charis175/risk-releases"   
+REPO="hesed-charis175/risk-releases" 
 VERSION="latest"
 BINARY_NAME="riskc"
 INSTALL_DIR="/usr/local/bin"
@@ -54,6 +54,41 @@ tar -xzf "$TMP_STD/stdlib.tar.gz" -C "$STDLIB_DIR" --strip-components=1
 rm -rf "$TMP_STD"
 
 success "Standard library installed to $STDLIB_DIR"
+
+info "Compiling standard library..."
+MANIFEST="$STDLIB_DIR/manifest"
+if [ ! -f "$MANIFEST" ]; then
+  error "Stdlib manifest not found at $MANIFEST"
+fi
+
+while IFS= read -r line || [ -n "$line" ]; do
+  [[ -z "$line" || "$line" == \#* ]] && continue
+  TARGET="$STDLIB_DIR/$line"
+  if [ ! -f "$TARGET" ]; then
+    info "Warning: $TARGET not found, skipping"
+    continue
+  fi
+  info "  compiling $line..."
+  RISK_STDLIB="$STDLIB_DIR" riskc "$TARGET" || error "Failed to compile $line"
+done < "$MANIFEST"
+
+success "Standard library compiled"
+
+# Set RISK_STDLIB in shell config
+SHELL_CONFIG="$HOME/.bashrc"
+if [ -n "$ZSH_VERSION" ] || [ "$SHELL" = "/bin/zsh" ]; then
+  SHELL_CONFIG="$HOME/.zshrc"
+fi
+
+EXPORT_LINE="export RISK_STDLIB=\"$STDLIB_DIR\""
+if ! grep -qF "$EXPORT_LINE" "$SHELL_CONFIG" 2>/dev/null; then
+  echo "" >> "$SHELL_CONFIG"
+  echo "# Risk language stdlib" >> "$SHELL_CONFIG"
+  echo "$EXPORT_LINE" >> "$SHELL_CONFIG"
+  info "RISK_STDLIB set in $SHELL_CONFIG"
+fi
+
+export RISK_STDLIB="$STDLIB_DIR"
 
 if command -v riskc &>/dev/null; then
   success "riskc is ready. Run: riskc --version"
