@@ -1,0 +1,2411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Risk Language Reference</title>
+  <link rel="stylesheet" href="style.css">
+<style>
+  /* ── DOCS LAYOUT ──────────────────────────────────────── */
+  body {
+    display: block; /* override any flex from style.css */
+  }
+
+  #docs-wrap {
+    display: flex;
+    min-height: calc(100vh - 56px);
+    margin-top: 56px;
+  }
+
+  /* ── SIDEBAR ─────────────────────────────────────────── */
+  #sidebar {
+    position: fixed;
+    left: 0;
+    width: 272px;
+    height: calc(100vh - 56px);
+    background: var(--bg);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    z-index: 50;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  #sidebar-header {
+    padding: 1.25rem 1.25rem 0.9rem;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 10;
+  }
+
+  #sidebar-header .logo {
+    font-family: var(--font-sans);
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.02em;
+  }
+
+  #sidebar-header .logo span { color: var(--accent); }
+
+  #sidebar-header .subtitle {
+    font-size: 0.68rem;
+    color: var(--text3);
+    margin-top: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  #sidebar nav { padding: 0.6rem 0 2rem; }
+
+  .nav-group { margin-bottom: 0.15rem; }
+
+  .nav-group-title {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text3);
+    padding: 0.7rem 1.25rem 0.25rem;
+  }
+
+  #sidebar a {
+    display: block;
+    padding: 0.3rem 1.25rem 0.3rem 1.5rem;
+    color: var(--text2);
+    text-decoration: none;
+    font-size: 0.82rem;
+    border-left: 2px solid transparent;
+    transition: all 0.12s;
+  }
+
+  #sidebar a:hover {
+    color: #fff;
+    background: var(--bg2);
+  }
+
+  #sidebar a.active {
+    color: var(--accent);
+    border-left-color: var(--accent);
+    background: var(--accent-bg);
+  }
+
+  #sidebar a.sub {
+    padding-left: 2.25rem;
+    font-size: 0.78rem;
+    color: var(--text3);
+  }
+
+  #sidebar a.sub:hover { color: var(--text); background: var(--bg2); }
+  #sidebar a.sub.active { color: var(--accent); border-left-color: var(--accent); background: var(--accent-bg); }
+
+  /* ── MAIN CONTENT ────────────────────────────────────── */
+  #content {
+    margin-left: 272px;
+    flex: 1;
+    padding: 3rem 3.5rem 5rem;
+    max-width: 900px;
+    font-family: var(--font-mono);
+  }
+
+  /* ── PAGE HEADER ─────────────────────────────────────── */
+  #page-header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  #page-header h1 {
+    font-family: var(--font-sans);
+    font-size: 2.6rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  #page-header h1 span { color: var(--accent); }
+
+  #page-header .tagline {
+    color: var(--text2);
+    font-size: 0.88rem;
+    margin-top: 0.4rem;
+  }
+
+  .version-bar {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.65rem 1rem;
+    font-size: 0.78rem;
+    color: var(--text2);
+    margin-top: 1rem;
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .version-bar span b { color: var(--text); }
+
+  /* Override badge styles from style.css for docs context */
+  .badge-blue  { background: rgba(91,156,246,0.12); color: var(--blue);   border: 1px solid rgba(91,156,246,0.25); }
+  .badge-green { background: rgba(78,201,138,0.12); color: var(--green);  border: 1px solid rgba(78,201,138,0.25); }
+
+  /* ── SECTIONS ────────────────────────────────────────── */
+  section { margin-bottom: 3rem; }
+
+  h2.section-title {
+    font-family: var(--font-sans);
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #fff;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.25rem;
+    scroll-margin-top: 4rem;
+    letter-spacing: -0.02em;
+  }
+
+  h3.sub-title {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin: 1.8rem 0 0.7rem;
+    scroll-margin-top: 4rem;
+  }
+
+  h4.mini-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text);
+    margin: 1.2rem 0 0.5rem;
+  }
+
+  p { margin-bottom: 0.9rem; color: var(--text2); font-size: 0.88rem; }
+
+  /* ── CODE BLOCKS ─────────────────────────────────────── */
+  pre {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 6px;
+    padding: 1.1rem 1.3rem;
+    overflow-x: auto;
+    margin: 0.8rem 0 1.2rem;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: var(--text);
+  }
+
+  code { font-family: var(--font-mono); font-size: 0.88em; }
+
+  p code, li code, td code {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0.1em 0.35em;
+    color: var(--accent);
+    font-size: 0.85em;
+  }
+
+  /* syntax tokens */
+  .kw  { color: #c792ea; font-weight: 600; }
+  .ty  { color: var(--green); }
+  .str { color: #c3e88d; }
+  .num { color: #f78c6c; }
+  .cmt { color: var(--text3); font-style: italic; }
+  .fn  { color: var(--blue); }
+  .op  { color: #89ddff; }
+  .ok-label  { color: var(--green); }
+  .err-label { color: var(--red); }
+
+  /* ── TABLES ──────────────────────────────────────────── */
+  .tbl-wrap { overflow-x: auto; margin: 0.8rem 0 1.4rem; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+
+  thead th {
+    background: var(--bg3);
+    color: var(--text);
+    font-weight: 600;
+    padding: 0.6rem 0.9rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border2);
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+  }
+
+  tbody tr { border-bottom: 1px solid var(--border); }
+  tbody tr:hover { background: var(--bg2); }
+  tbody td { padding: 0.55rem 0.9rem; vertical-align: top; color: var(--text2); }
+
+  /* ── CALLOUTS ────────────────────────────────────────── */
+  .callout {
+    border-radius: 6px;
+    padding: 0.9rem 1.1rem;
+    margin: 1rem 0 1.3rem;
+    font-size: 0.85rem;
+    display: flex;
+    gap: 0.8rem;
+    align-items: flex-start;
+    border: 1px solid;
+  }
+
+  .callout-icon { font-size: 1rem; flex-shrink: 0; margin-top: 0.05rem; }
+  .callout-body { flex: 1; color: var(--text2); }
+  .callout-body strong { display: block; margin-bottom: 0.3rem; color: var(--text); }
+
+  .callout.note    { background: rgba(91,156,246,0.06); border-color: rgba(91,156,246,0.2); }
+  .callout.warning { background: rgba(232,163,42,0.06); border-color: rgba(232,163,42,0.2); }
+  .callout.danger  { background: rgba(224,92,92,0.06);  border-color: rgba(224,92,92,0.2);  }
+  .callout.tip     { background: rgba(78,201,138,0.06); border-color: rgba(78,201,138,0.2); }
+
+  .callout.note    .callout-icon { color: var(--blue); }
+  .callout.warning .callout-icon { color: var(--accent); }
+  .callout.danger  .callout-icon { color: var(--red); }
+  .callout.tip     .callout-icon { color: var(--green); }
+
+  /* ── MISC ────────────────────────────────────────────── */
+  ul, ol { padding-left: 1.4rem; margin-bottom: 0.9rem; }
+  li { margin-bottom: 0.25rem; color: var(--text2); font-size: 0.88rem; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+  hr.sep { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+  footer {
+    margin-top: 4rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    color: var(--text3);
+    font-size: 0.78rem;
+  }
+
+  @media (max-width: 900px) {
+    #sidebar { display: none; }
+    #content { margin-left: 0; padding: 1.5rem; }
+    .two-col { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div id="nav-placeholder"></div>
+<aside id="sidebar">
+  <div id="sidebar-header">
+    <div class="logo">RISK</div>
+    <div class="subtitle">Language Reference</div>
+  </div>
+  <nav style="
+	  position: relative;
+	  display: block;
+	  ">
+    <div class="nav-group">
+      <div class="nav-group-title">Overview</div>
+      <a href="#intro">Introduction</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Type System</div>
+      <a href="#primitives">Primitive Types</a>
+      <a href="#integers"   class="sub">Integers</a>
+      <a href="#floats"     class="sub">Floating-Point</a>
+      <a href="#bool"       class="sub">Boolean</a>
+      <a href="#char"       class="sub">Character</a>
+      <a href="#string"     class="sub">String</a>
+      <a href="#pointers"   class="sub">Pointers</a>
+      <a href="#references" class="sub">References</a>
+      <a href="#compound">Compound Types</a>
+      <a href="#arrays"     class="sub">Arrays</a>
+      <a href="#hashmap"    class="sub">HashMap</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Language</div>
+      <a href="#controlflow">Control Flow</a>
+      <a href="#block-expressions"   class="sub">Block Expressions</a>
+      <a href="#if-elseif-else"      class="sub">If/ else if /else</a>
+      <a href="#switch-statement"    class="sub">Switch Statements</a>
+      <a href="#for-loop"   	     class="sub">For Loop</a>
+      <a href="#while-loop"          class="sub">While loop</a>
+      <a href="#functions">Functions</a>
+      <a href="#func-decl"   class="sub">Declaration & Definition</a>
+      <a href="#func-ptrs"        class="sub">Function Pointers</a>
+      <a href="#typealiases"             class="sub">Type Aliases</a>
+      <a href="#lambdas"         class="sub">Lambda / Closure Functions</a>
+      <a href="#structures">Structures</a>
+      <a href="#opts">Opts (Enumerations)</a>
+      <a href="#operators">Operators</a>
+      <a href="#casting">Casting</a>
+      <a href="#register">register Keyword</a>
+      <a href="#modules">Modules &amp; Imports</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Standard Library</div>
+      <a href="#stdlib-io">I/O</a>
+      <a href="#stdlib-conv">Type Conversion</a>
+      <a href="#stdlib-general">General</a>
+      <a href="#stdlib-math">Math</a>
+      <a href="#stdlib-str">Strings</a>
+      <a href="#stdlib-fio">File I/O</a>
+      <a href="#stdlib-rand">Random</a>
+      <a href="#stdlib-time">Time</a>
+      <a href="#stdlib-array">Array Methods</a>
+      <a href="#stdlib-tui">TUI &amp; Keyboard</a>
+      <a href="#stdlib-sys">System</a>
+      <a href="#stdlib-mem">Memory</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Examples</div>
+      <a href="#examples">Examples</a>
+      <a href="#example-tui"      class="sub">TUI Explorer</a>
+      <a href="#example-hello"    class="sub">Hello World</a>
+      <a href="#example-fib"      class="sub">Fibonacci</a>
+      <a href="#example-fileio"   class="sub">File I/O</a>
+      <a href="#example-snake"    class="sub">Terminal Snake</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Quick Reference</div>
+      <a href="#type-cheatsheet">Type Cheat Sheet</a>
+      <a href="#op-precedence">Operator Precedence</a>
+    </div>
+  </nav>
+</aside>
+
+<!-- ════════════════════════════════════════════ MAIN -->
+<main id="content">
+
+  <!-- PAGE HEADER -->
+  <div id="page-header">
+    <h1>RISK</h1>
+    <p class="tagline">Programming Language Reference - Complete Language Documentation</p>
+    <div style="margin-top:0.8rem;">
+      <span class="badge badge-blue">Revision 1.0</span>
+      <span class="badge badge-green">2026</span>
+    </div>
+    <div class="version-bar">
+      <span><b>File extension:</b> .risk</span>
+      <span><b>Type system:</b> Static, explicit</span>
+      <span><b>Memory:</b> Explicit management</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ 1. INTRO -->
+   <section id="intro">
+    <h2 class="section-title">Introduction to Risk</h2>
+
+    <p>
+      Risk is a systems-level programming language with a static type system, explicit
+      memory management, and a rather convenient set of built-in functions (I hope it is). It suits domains where predictable performance, precise resource control,
+      and low-level memory access are important constraints.
+    </p>
+	<div class="callout note">
+		  <span class="callout-icon">ℹ</span>
+		  <div class="callout-body">
+		  <strong>Scope of this documentation</strong>
+		  Risk has two development branches each with a compiler. riskc and riskavr (For Avr chips).
+		  There are many major differences between the two. For example, riskc has no issue allocating on heap, while riskavr with its target chips will either return a linker error or crash with heap.
+		  This documentation is only for <bold>riskc</bold>
+	  </div>
+	  </div>
+
+    <p>
+      Risk source files use the <code>.risk</code> extension (Yeah, kinda lazy when it comes to finding names, you will soon understand why). I designed the language so that every
+      variable's type is known at compile time and every allocation is visible in the source code, meaning there is no hidden garbage collector and implicit boxing. :) At the same time, Risk comes with a
+      "rather convenient" (again) standard library covering I/O, string manipulation, file access, math, randomness, and
+      timing.
+    </p>
+
+    <div class="callout note">
+      <span class="callout-icon">ℹ</span>
+      <div class="callout-body">
+        <strong>Design philosophy</strong>
+        Risk aims to be explicit (type annotations on variable declarations, well specified casts, clearly stated pointer operations) without being too verbose, so reading a piece of Risk code tells you exactly what is happening in memory, and if your code screws up, you know i ain't doing anything in background. Your code looks like you, Period.
+      </div>
+    </div>
+  </section>
+
+ <!-- ══════════════════════════════════════ 2. PRIMITIVES -->
+  <section id="primitives">
+    <h2 class="section-title">Primitive Types</h2>
+
+    <p>
+      Risk's type system has a set of well-defined platform-independent width primitive types covering integers,
+      floats, booleans, characters, strings, and raw memory primitives. 
+    </p>
+
+    <!-- 2.1 Integers -->
+    <h3 class="sub-title" id="integers">Integer Types</h3>
+
+    <p>
+      Risk provides signed and unsigned integers in 8, 16, 32, and 64-bit widths. The default
+      integer type is <code>i32</code>. Unsigned variants
+      are available at all widths and are named with a <code>u</code> prefix. Integer literals can be
+      written in decimal, hexadecimal (<code>0x</code> prefix), or binary (<code>0b</code> prefix).
+    </p>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr><th>Type</th><th>Width</th><th>Range</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>i8</code></td> <td>8-bit</td>  <td>−128 to 127</td>                           <td>Signed 8-bit integer</td></tr>
+          <tr><td><code>i16</code></td><td>16-bit</td> <td>−32,768 to 32,767</td>                     <td>Signed 16-bit integer</td></tr>
+          <tr><td><code>i32</code></td><td>32-bit</td> <td>−2,147,483,648 to 2,147,483,647</td>       <td>Signed 32-bit integer <em>(default)</em></td></tr>
+          <tr><td><code>i64</code></td><td>64-bit</td> <td>−9.2×10¹⁸ to 9.2×10¹⁸</td>               <td>Signed 64-bit integer</td></tr>
+          <tr><td><code>u8</code></td> <td>8-bit</td>  <td>0 to 255</td>                              <td>Unsigned 8-bit integer</td></tr>
+          <tr><td><code>u16</code></td><td>16-bit</td> <td>0 to 65,535</td>                           <td>Unsigned 16-bit integer</td></tr>
+          <tr><td><code>u32</code></td><td>32-bit</td> <td>0 to 4,294,967,295</td>                    <td>Unsigned 32-bit integer</td></tr>
+          <tr><td><code>u64</code></td><td>64-bit</td> <td>0 to 1.8×10¹⁹</td>                        <td>Unsigned 64-bit integer</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+<pre><span class="cmt">// Variable declarations with explicit integer types</span>
+a: <span class="ty">i32</span> = <span class="num">-42;</span>
+b: <span class="ty">u8</span>  = <span class="num">255;</span>
+c: <span class="ty">i64</span> = <span class="num">9259034215553;</span>
+d: <span class="ty">u32</span> = <span class="num">0xFF</span>;     <span class="cmt">// hexadecimal literal</span>
+e: <span class="ty">u8</span>  = <span class="num">0b011</span>;    <span class="cmt">// binary literal</span></pre>
+
+    <!-- 2.2 Floats -->
+    <h3 class="sub-title" id="floats">Floating-Point Types</h3>
+
+    <p>
+      Risk supports IEEE 754 single-precision (<code>f32</code>) and double-precision (<code>f64</code>)
+      floating-point numbers. The default float type is <code>f64</code>. The special values
+      <code>INF</code> and <code>NAN</code> are recognized as built-in literals for positive infinity
+      and not-a-number respectively.
+    </p>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr><th>Type</th><th>Width</th><th>Precision</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>f32</code></td><td>32-bit</td><td>~7 decimal digits</td> <td>Single-precision IEEE 754 float</td></tr>
+          <tr><td><code>f64</code></td><td>64-bit</td><td>~15 decimal digits</td><td>Double-precision IEEE 754 float <em>(default)</em></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+<pre>pi:  <span class="ty">f64</span> = 3.141592;
+e:   <span class="ty">f32</span> = 2.7;
+inf: <span class="ty">f32</span> = INF;     <span class="cmt">// positive infinity</span>
+nan: <span class="ty">f64</span> = NAN;     <span class="cmt">// not-a-number</span></pre>
+
+    <!-- 2.3 Boolean -->
+    <h3 class="sub-title" id="bool">Boolean</h3>
+
+    <p>
+      The <code>bool</code> type holds exactly two values: <code>true</code> or <code>false</code>.
+      Boolean expressions can be formed using the comparison and logical operators and are the
+      condition type required by all control flow constructs.
+    </p>
+
+<pre>t:      <span class="ty">bool</span> = <span class="kw">true</span>;
+f:      <span class="ty">bool</span> = <span class="kw">false</span>;
+result: <span class="ty">bool</span> = (10 > 5) && !f;  <span class="cmt">// true</span></pre>
+
+    <!-- 2.4 Char -->
+    <h3 class="sub-title" id="char">Character</h3>
+
+    <p>
+      The <code>char</code> type holds a single Unicode scalar value and is always 4 bytes wide,
+      allowing the full Unicode range to be represented without multi-char sequences. Character
+      literals are enclosed in single quotes. Standard escape sequences such as <code>'\n'</code>,
+      <code>'\t'</code>, and <code>'\\'</code> are supported.
+    </p>
+
+<pre>c:       <span class="ty">char</span> = <span class="str">'A'</span>;
+dollar:  <span class="ty">char</span> = <span class="str">'$'</span>;
+newline: <span class="ty">char</span> = <span class="str">'\n'</span>;</pre>
+
+    <!-- 2.5 String -->
+    <h3 class="sub-title" id="string">String</h3>
+
+    <p>
+      The <code>string</code> type represents a sequence of characters enclosed in double quotes.
+      Strings in Risk are owned values — they carry their own storage and do not require the
+      programmer to manage a separate buffer manually for typical use.
+    </p>
+
+<pre>s: <span class="ty">string</span> = <span class="str">"Hello World!"</span>;</pre>
+
+    <!-- 2.6 Pointers -->
+    <h3 class="sub-title" id="pointers">Pointers</h3>
+
+    <p>
+      Pointers in Risk are declared with the <code>ptr&lt;T&gt;</code> generic syntax. They hold the
+      raw memory address of a value of type <code>T</code>. The address-of operator <code>&amp;</code>
+      takes the address of a variable, and the dereference operator <code>*</code> reads or writes
+      through the pointer.
+    </p>
+
+    <p>
+      Constness can be applied to either the pointer itself, the data it points to, or both,
+      following a straightforward read-right-to-left rule:
+    </p>
+
+    <ul>
+      <li><code>ptr&lt;T&gt;</code> — mutable pointer to mutable data</li>
+      <li><code>ptr&lt;const T&gt;</code> — mutable pointer to immutable data (cannot write through)</li>
+      <li><code>const ptr&lt;T&gt;</code> — immutable pointer (cannot be reseated) to mutable data</li>
+      <li><code>const ptr&lt;const T&gt;</code> — fully immutable: neither the pointer nor the data may change</li>
+    </ul>
+
+    <!-- DIAGRAM: Pointer constness 2x2 -->
+    <svg viewBox="0 0 620 280" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:620px;display:block;margin:1.2rem 0 1.6rem;font-family:'Segoe UI',system-ui,sans-serif;">
+      <defs>
+        <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#5b8dee"/>
+        </marker>
+        <marker id="arr-lock" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#7c87a6"/>
+        </marker>
+      </defs>
+
+      <!-- grid labels -->
+      <text x="190" y="22" fill="#7c87a6" font-size="11" text-anchor="middle" font-weight="600">POINTER mutable</text>
+      <text x="440" y="22" fill="#7c87a6" font-size="11" text-anchor="middle" font-weight="600">POINTER const</text>
+      <text x="18" y="100" fill="#7c87a6" font-size="11" text-anchor="middle" font-weight="600" transform="rotate(-90,18,100)">DATA mutable</text>
+      <text x="18" y="210" fill="#7c87a6" font-size="11" text-anchor="middle" font-weight="600" transform="rotate(-90,18,210)">DATA const</text>
+
+      <!-- Cell 1: ptr<T> — top left -->
+      <rect x="40" y="32" width="300" height="105" rx="8" fill="#20232c" stroke="#5b8dee" stroke-width="1.5"/>
+      <text x="55" y="52" fill="#a78bfa" font-size="11" font-family="'Cascadia Code','Fira Code',monospace">ptr&lt;T&gt;</text>
+      <!-- pointer box -->
+      <rect x="55" y="62" width="72" height="30" rx="5" fill="#12141a" stroke="#5b8dee" stroke-width="1.5"/>
+      <text x="91" y="82" fill="#5b8dee" font-size="11" text-anchor="middle" font-family="'Cascadia Code','Fira Code',monospace">ptrX</text>
+      <!-- arrow -->
+      <line x1="127" y1="77" x2="178" y2="77" stroke="#5b8dee" stroke-width="1.8" marker-end="url(#arr)"/>
+      <!-- data box -->
+      <rect x="180" y="62" width="72" height="30" rx="5" fill="#12141a" stroke="#34d399" stroke-width="1.5"/>
+      <text x="216" y="82" fill="#34d399" font-size="11" text-anchor="middle" font-family="'Cascadia Code','Fira Code',monospace">42</text>
+      <!-- labels -->
+      <text x="91" y="108" fill="#7c87a6" font-size="10" text-anchor="middle">can reseat ✓</text>
+      <text x="216" y="108" fill="#7c87a6" font-size="10" text-anchor="middle">can write ✓</text>
+
+      <!-- Cell 2: const ptr<T> — top right -->
+      <rect x="360" y="32" width="245" height="105" rx="8" fill="#20232c" stroke="#fbbf24" stroke-width="1.5"/>
+      <text x="375" y="52" fill="#a78bfa" font-size="11" font-family="'Cascadia Code','Fira Code',monospace">const ptr&lt;T&gt;</text>
+      <!-- pointer box with lock -->
+      <rect x="375" y="62" width="72" height="30" rx="5" fill="#12141a" stroke="#fbbf24" stroke-width="1.5"/>
+      <text x="405" y="82" fill="#fbbf24" font-size="11" text-anchor="middle" font-family="'Cascadia Code','Fira Code',monospace">ptrX</text>
+      <!-- lock on pointer -->
+      <text x="443" y="73" fill="#fbbf24" font-size="13">LOCK</text>
+      <!-- arrow -->
+      <line x1="447" y1="77" x2="490" y2="77" stroke="#5b8dee" stroke-width="1.8" marker-end="url(#arr)"/>
+      <!-- data box -->
+      <rect x="492" y="62" width="72" height="30" rx="5" fill="#12141a" stroke="#34d399" stroke-width="1.5"/>
+      <text x="528" y="82" fill="#34d399" font-size="11" text-anchor="middle" font-family="'Cascadia Code','Fira Code',monospace">42</text>
+      <text x="405" y="108" fill="#7c87a6" font-size="10" text-anchor="middle">can't reseat ✗</text>
+      <text x="528" y="108" fill="#7c87a6" font-size="10" text-anchor="middle">can write ✓</text>
+
+      <!-- Cell 3: ptr<const T> — bottom left -->
+      <rect x="40" y="152" width="300" height="105" rx="8" fill="#20232c" stroke="#f87171" stroke-width="1.5"/>
+      <text x="55" y="172" fill="#a78bfa" font-size="11" font-family="'Cascadia Code','Fira Code',monospace">ptr&lt;const T&gt;</text>
+      <!-- pointer box -->
+      <rect x="55" y="182" width="72" height="30" rx="5" fill="#12141a" stroke="#5b8dee" stroke-width="1.5"/>
+      <text x="91" y="202" fill="#5b8dee" font-size="11" text-anchor="middle" font-family="'Cascadia Code','Fira Code',monospace">ptrY</text>
+      <!-- arrow -->
+      <line x1="127" y1="197" x2="178" y2="197" stroke="#5b8dee" stroke-width="1.8" marker-end="url(#arr)"/>
+      <!-- data box with lock -->
+      <rect x="180" y="182" width="72" height="30" rx="5" fill="#12141a" stroke="#f87171" stroke-width="1.5"/>
+      <text x="210" y="202" fill="#f87171" font-size="11" text-anchor="middle" font-family="'Cascadia Code','Fira Code',monospace">14</text>
+      <text x="248" y="193" fill="#f87171" font-size="13">LOCK</text>
+      <text x="91" y="238" fill="#7c87a6" font-size="10" text-anchor="middle">can reseat ✓</text>
+      <text x="216" y="238" fill="#7c87a6" font-size="10" text-anchor="middle">can't write ✗</text>
+
+      <!-- Cell 4: const ptr<const T> — bottom right -->
+      <rect x="360" y="152" width="245" height="105" rx="8" fill="#20232c" stroke="#a78bfa" stroke-width="1.5"/>
+      <text x="375" y="172" fill="#a78bfa" font-size="10" font-family="'Cascadia Code','Fira Code',monospace">const ptr&lt;const T&gt;</text>
+      <!-- pointer box with lock -->
+      <rect x="375" y="182" width="72" height="30" rx="5" fill="#12141a" stroke="#fbbf24" stroke-width="1.5"/>
+      <text x="405" y="202" fill="#fbbf24" font-size="11" text-anchor="middle" font-family="'Cascadia Code','Fira Code',monospace">ptrY</text>
+      <text x="443" y="193" fill="#fbbf24" font-size="13">LOCK</text>
+      <!-- arrow -->
+      <line x1="447" y1="197" x2="490" y2="197" stroke="#5b8dee" stroke-width="1.8" marker-end="url(#arr)"/>
+      <!-- data box with lock -->
+      <rect x="492" y="182" width="72" height="30" rx="5" fill="#12141a" stroke="#f87171" stroke-width="1.5"/>
+      <text x="522" y="202" fill="#f87171" font-size="11" text-anchor="middle" font-family="'Cascadia Code','Fira Code',monospace">14</text>
+      <text x="560" y="193" fill="#f87171" font-size="13">LOCK</text>
+      <text x="405" y="238" fill="#7c87a6" font-size="10" text-anchor="middle">can't reseat ✗</text>
+      <text x="528" y="238" fill="#7c87a6" font-size="10" text-anchor="middle">can't write ✗</text>
+
+      <!-- divider lines -->
+      <line x1="340" y1="28" x2="340" y2="268" stroke="#2e3140" stroke-width="1" stroke-dasharray="4,3"/>
+      <line x1="35" y1="145" x2="615" y2="145" stroke="#2e3140" stroke-width="1" stroke-dasharray="4,3"/>
+    </svg>
+
+<pre>x:          <span class="ty">i32</span>            = 42;
+ptrX:       <span class="ty">ptr</span>&lt;<span class="ty">i32</span>&gt;       = &x;
+*ptrX = 5; <span class="cmt">// dereference and write</span>
+
+y:          <span class="kw">const</span> <span class="ty">i32</span>       = 14;
+ptrY:       <span class="ty">ptr</span>&lt;<span class="kw">const</span> <span class="ty">i32</span>&gt; = &y;
+<span class="cmt">// *ptrY = 10;  WRONG — cannot write through a pointer-to-const</span>
+
+constPtrX:  <span class="kw">const</span> <span class="ty">ptr</span>&lt;<span class="ty">i32</span>&gt;       = &x;
+<span class="cmt">// constPtrX can modify what it points to, but cannot be reseated</span>
+
+constPtrY:  <span class="kw">const</span> <span class="ty">ptr</span>&lt;<span class="kw">const</span> <span class="ty">i32</span>&gt; = &y;
+<span class="cmt">// fully immutable — neither pointer nor data may change</span></pre>
+
+    <!-- 2.7 References -->
+    <h3 class="sub-title" id="references">References</h3>
+
+    <p>
+      References, declared with <code>ref&lt;T&gt;</code>, are non-nullable aliases to an existing
+      variable. Unlike pointers, a reference cannot be declared without immediately binding it to a
+      referend, and it cannot hold a null value. Reading a reference yields the referred value
+      directly; writing through a reference modifies the original variable.
+    </p>
+
+    <div class="callout warning">
+      <span class="callout-icon">⚠</span>
+      <div class="callout-body">
+        <strong>Non-nullable rule</strong>
+        A reference must be initialized at the point of declaration. Declaring
+        <code>refA: ref&lt;i8&gt;;</code> without a referend, or assigning <code>null</code> to it, is a
+        compile-time error.
+      </div>
+    </div>
+
+    <!-- DIAGRAM: Reference vs Pointer -->
+    <svg viewBox="0 0 620 210" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:620px;display:block;margin:1.2rem 0 1.6rem;font-family:'Segoe UI',system-ui,sans-serif;">
+      <defs>
+        <marker id="arr2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#5b8dee"/>
+        </marker>
+        <marker id="arr3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#a78bfa"/>
+        </marker>
+      </defs>
+
+      <!-- LEFT: Pointer panel -->
+      <rect x="10" y="10" width="285" height="190" rx="8" fill="#20232c" stroke="#5b8dee" stroke-width="1.5"/>
+      <text x="152" y="30" fill="#5b8dee" font-size="12" font-weight="700" text-anchor="middle">ptr&lt;T&gt; — Pointer</text>
+
+      <!-- stack label -->
+      <rect x="25" y="42" width="50" height="14" rx="3" fill="#12141a" stroke="#2e3140" stroke-width="1"/>
+      <text x="50" y="53" fill="#7c87a6" font-size="9" text-anchor="middle">STACK</text>
+
+      <!-- ptr box holding an address -->
+      <rect x="25" y="62" width="90" height="36" rx="5" fill="#12141a" stroke="#5b8dee" stroke-width="1.5"/>
+      <text x="70" y="76" fill="#7c87a6" font-size="9" text-anchor="middle">ptrX</text>
+      <text x="70" y="90" fill="#5b8dee" font-size="10" text-anchor="middle" font-family="'Cascadia Code','Fira Code',monospace">0x7ffc…</text>
+
+      <!-- arrow to data -->
+      <path d="M115,80 C150,80 150,130 175,130" stroke="#5b8dee" stroke-width="1.8" fill="none" marker-end="url(#arr2)"/>
+
+      <!-- heap label -->
+      <rect x="170" y="42" width="50" height="14" rx="3" fill="#12141a" stroke="#2e3140" stroke-width="1"/>
+      <text x="195" y="53" fill="#7c87a6" font-size="9" text-anchor="middle">HEAP</text>
+
+      <!-- data box -->
+      <rect x="175" y="116" width="90" height="36" rx="5" fill="#12141a" stroke="#34d399" stroke-width="1.5"/>
+      <text x="220" y="130" fill="#7c87a6" font-size="9" text-anchor="middle">x : i32</text>
+      <text x="220" y="144" fill="#34d399" font-size="11" text-anchor="middle" font-family="'Cascadia Code','Fira Code',monospace">42</text>
+
+      <!-- reseat label -->
+      <path d="M70,98 C70,172 140,172 175,152" stroke="#f87171" stroke-width="1.2" fill="none" stroke-dasharray="4,3" marker-end="url(#arr2)"/>
+      <text x="100" y="185" fill="#f87171" font-size="9" text-anchor="middle">can point elsewhere</text>
+
+      <!-- RIGHT: Reference panel -->
+      <rect x="325" y="10" width="285" height="190" rx="8" fill="#20232c" stroke="#a78bfa" stroke-width="1.5"/>
+      <text x="467" y="30" fill="#a78bfa" font-size="12" font-weight="700" text-anchor="middle">ref&lt;T&gt; — Reference</text>
+
+      <!-- stack label -->
+      <rect x="340" y="42" width="50" height="14" rx="3" fill="#12141a" stroke="#2e3140" stroke-width="1"/>
+      <text x="365" y="53" fill="#7c87a6" font-size="9" text-anchor="middle">STACK</text>
+
+      <!-- a box -->
+      <rect x="340" y="62" width="90" height="36" rx="5" fill="#12141a" stroke="#a78bfa" stroke-width="1.5"/>
+      <text x="385" y="76" fill="#7c87a6" font-size="9" text-anchor="middle">a : i8</text>
+      <text x="385" y="90" fill="#a78bfa" font-size="11" text-anchor="middle" font-family="'Cascadia Code','Fira Code',monospace">5</text>
+
+      <!-- refA box overlapping — same data, curved alias arrow -->
+      <rect x="490" y="62" width="90" height="36" rx="5" fill="#12141a" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <text x="535" y="76" fill="#7c87a6" font-size="9" text-anchor="middle">refA</text>
+      <text x="535" y="90" fill="#a78bfa" font-size="11" text-anchor="middle" font-family="'Cascadia Code','Fira Code',monospace">5</text>
+
+      <!-- curved alias arrow -->
+      <path d="M490,75 C460,55 430,55 430,80" stroke="#a78bfa" stroke-width="1.8" fill="none" marker-end="url(#arr3)"/>
+      <text x="460" y="50" fill="#a78bfa" font-size="9" text-anchor="middle">alias — same location</text>
+
+      <!-- null forbidden -->
+      <rect x="340" y="138" width="240" height="28" rx="5" fill="#12141a" stroke="#f87171" stroke-width="1" stroke-dasharray="4,2"/>
+      <text x="460" y="156" fill="#f87171" font-size="10" text-anchor="middle">✗  null not allowed  •  ✗  cannot be reseated</text>
+    </svg>
+
+<pre>a:    <span class="ty">i8</span>        = 5;
+<span class="cmt">// refA: ref&lt;i8&gt;;        WRONG — references must be immediately bound</span>
+<span class="cmt">// refA: ref&lt;i8&gt; = null; WRONG — references cannot be null</span>
+
+refA: <span class="ty">ref</span>&lt;<span class="ty">i8</span>&gt; = a;
+<span class="fn">println</span>(refA); <span class="cmt">// prints 5 — the actual value of a</span>
+refA = 77;     <span class="cmt">// writes through reference; a is now 77</span></pre>
+  </section>
+
+  <!-- ══════════════════════════════════════ 3. COMPOUND -->
+  <section id="compound">
+    <h2 class="section-title">Compound Types</h2>
+
+    <!-- 3.1 Arrays -->
+    <h3 class="sub-title" id="arrays">Arrays</h3>
+
+    <p>
+      Risk provides two distinct array kinds: a compile-time-fixed static array and a
+      heap-allocated dynamic array. Both use the <code>Array&lt;T&gt;</code> syntax, differentiated
+      by whether a size argument is supplied.
+    </p>
+
+    <h4 class="mini-title">Static Array — <code>Array&lt;T, N&gt;</code></h4>
+
+    <p>
+      A static array has a fixed element count <code>N</code> that must be known at compile time.
+      The array's memory is sized exactly to hold <code>N</code> elements of type <code>T</code> and
+      cannot grow or shrink at runtime. Push and pop operations are not available. Accessing an
+      out-of-bounds index is a compile-time or runtime error.
+    </p>
+
+<pre><span class="cmt">// arr: Array&lt;i32, 5&gt; = [];  WRONG — static arrays must be fully initialized</span>
+arr: <span class="ty">Array</span>&lt;<span class="ty">i32</span>, 5&gt; = [1, 2, 3, 4, 5];
+<span class="cmt">// arr.push(6);              WRONG — no push on static arrays</span>
+
+len:  <span class="ty">i32</span> = <span class="fn">length</span>(arr); <span class="cmt">// 5</span>
+arr[0] = 5;               <span class="cmt">// index-based write</span>
+<span class="cmt">// println(arr[5]);          WRONG — out-of-bounds access</span></pre>
+
+    <h4 class="mini-title">Dynamic Array — <code>Array&lt;T&gt;</code></h4>
+
+    <p>
+      A dynamic array is a heap-allocated, growable contiguous buffer. It starts empty and can
+      be extended or reduced at runtime through a set of methods. Elements are accessed by index
+      the same way as static arrays.
+    </p>
+
+    <!-- DIAGRAM: Static vs Dynamic array memory layout -->
+    <svg viewBox="0 0 620 230" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:620px;display:block;margin:1rem 0 1.4rem;font-family:'Segoe UI',system-ui,sans-serif;">
+      <defs>
+        <marker id="arrA" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#5b8dee"/>
+        </marker>
+      </defs>
+
+      <!-- LEFT: Static Array -->
+      <rect x="10" y="10" width="280" height="210" rx="8" fill="#20232c" stroke="#5b8dee" stroke-width="1.5"/>
+      <text x="150" y="30" fill="#5b8dee" font-size="12" font-weight="700" text-anchor="middle">Array&lt;i32, 5&gt; — Static</text>
+
+      <!-- Stack bar label -->
+      <text x="150" y="50" fill="#7c87a6" font-size="10" text-anchor="middle">STACK — fixed at compile time</text>
+
+      <!-- 5 cells -->
+      <rect x="25"  y="58" width="46" height="36" rx="4" fill="#12141a" stroke="#5b8dee" stroke-width="1.5"/>
+      <rect x="73"  y="58" width="46" height="36" rx="4" fill="#12141a" stroke="#5b8dee" stroke-width="1.5"/>
+      <rect x="121" y="58" width="46" height="36" rx="4" fill="#12141a" stroke="#5b8dee" stroke-width="1.5"/>
+      <rect x="169" y="58" width="46" height="36" rx="4" fill="#12141a" stroke="#5b8dee" stroke-width="1.5"/>
+      <rect x="217" y="58" width="46" height="36" rx="4" fill="#12141a" stroke="#5b8dee" stroke-width="1.5"/>
+
+      <text x="48"  y="81" fill="#34d399" font-size="12" text-anchor="middle" font-family="'Cascadia Code','Fira Code',monospace">1</text>
+      <text x="96"  y="81" fill="#34d399" font-size="12" text-anchor="middle" font-family="'Cascadia Code','Fira Code',monospace">2</text>
+      <text x="144" y="81" fill="#34d399" font-size="12" text-anchor="middle" font-family="'Cascadia Code','Fira Code',monospace">3</text>
+      <text x="192" y="81" fill="#34d399" font-size="12" text-anchor="middle" font-family="'Cascadia Code','Fira Code',monospace">4</text>
+      <text x="240" y="81" fill="#34d399" font-size="12" text-anchor="middle" font-family="'Cascadia Code','Fira Code',monospace">5</text>
+
+      <!-- index labels -->
+      <text x="48"  y="108" fill="#7c87a6" font-size="9" text-anchor="middle">[0]</text>
+      <text x="96"  y="108" fill="#7c87a6" font-size="9" text-anchor="middle">[1]</text>
+      <text x="144" y="108" fill="#7c87a6" font-size="9" text-anchor="middle">[2]</text>
+      <text x="192" y="108" fill="#7c87a6" font-size="9" text-anchor="middle">[3]</text>
+      <text x="240" y="108" fill="#7c87a6" font-size="9" text-anchor="middle">[4]</text>
+
+      <!-- brace -->
+      <path d="M25,118 L25,128 L263,128 L263,118" stroke="#5b8dee" stroke-width="1.2" fill="none"/>
+      <text x="144" y="144" fill="#5b8dee" font-size="10" text-anchor="middle">N = 5, size fixed forever</text>
+      <text x="144" y="160" fill="#7c87a6" font-size="9.5" text-anchor="middle">no .push() — no .pop()</text>
+      <text x="144" y="178" fill="#7c87a6" font-size="9.5" text-anchor="middle">out-of-bounds [5] → error</text>
+
+      <!-- RIGHT: Dynamic Array -->
+      <rect x="325" y="10" width="285" height="210" rx="8" fill="#20232c" stroke="#a78bfa" stroke-width="1.5"/>
+      <text x="467" y="30" fill="#a78bfa" font-size="12" font-weight="700" text-anchor="middle">Array&lt;i32&gt; — Dynamic</text>
+
+      <!-- Stack: pointer + meta -->
+      <text x="467" y="50" fill="#7c87a6" font-size="10" text-anchor="middle">STACK — descriptor</text>
+      <rect x="340" y="56" width="90" height="34" rx="4" fill="#12141a" stroke="#a78bfa" stroke-width="1.5"/>
+      <text x="385" y="69" fill="#7c87a6" font-size="8.5" text-anchor="middle">ptr → heap</text>
+      <text x="385" y="83" fill="#a78bfa" font-size="9" text-anchor="middle" font-family="'Cascadia Code','Fira Code',monospace">0x…</text>
+
+      <rect x="446" y="56" width="50" height="34" rx="4" fill="#12141a" stroke="#2e3140" stroke-width="1"/>
+      <text x="471" y="69" fill="#7c87a6" font-size="8.5" text-anchor="middle">len</text>
+      <text x="471" y="83" fill="#fbbf24" font-size="10" text-anchor="middle">3</text>
+
+      <rect x="505" y="56" width="50" height="34" rx="4" fill="#12141a" stroke="#2e3140" stroke-width="1"/>
+      <text x="530" y="69" fill="#7c87a6" font-size="8.5" text-anchor="middle">cap</text>
+      <text x="530" y="83" fill="#fbbf24" font-size="10" text-anchor="middle">6</text>
+
+      <!-- arrow to heap -->
+      <path d="M385,90 C385,115 385,115 385,120" stroke="#5b8dee" stroke-width="1.8" fill="none" marker-end="url(#arrA)"/>
+
+      <!-- Heap cells: 3 used + 3 spare -->
+      <text x="467" y="118" fill="#7c87a6" font-size="10" text-anchor="middle">HEAP — contiguous buffer</text>
+      <rect x="340" y="124" width="40" height="34" rx="4" fill="#12141a" stroke="#34d399" stroke-width="1.5"/>
+      <rect x="382" y="124" width="40" height="34" rx="4" fill="#12141a" stroke="#34d399" stroke-width="1.5"/>
+      <rect x="424" y="124" width="40" height="34" rx="4" fill="#12141a" stroke="#34d399" stroke-width="1.5"/>
+      <rect x="466" y="124" width="40" height="34" rx="4" fill="#12141a" stroke="#2e3140" stroke-width="1" stroke-dasharray="4,2"/>
+      <rect x="508" y="124" width="40" height="34" rx="4" fill="#12141a" stroke="#2e3140" stroke-width="1" stroke-dasharray="4,2"/>
+      <rect x="550" y="124" width="40" height="34" rx="4" fill="#12141a" stroke="#2e3140" stroke-width="1" stroke-dasharray="4,2"/>
+
+      <text x="360" y="146" fill="#34d399" font-size="11" text-anchor="middle" font-family="'Cascadia Code','Fira Code',monospace">1</text>
+      <text x="402" y="146" fill="#34d399" font-size="11" text-anchor="middle" font-family="'Cascadia Code','Fira Code',monospace">2</text>
+      <text x="444" y="146" fill="#34d399" font-size="11" text-anchor="middle" font-family="'Cascadia Code','Fira Code',monospace">3</text>
+      <text x="486" y="146" fill="#2e3140" font-size="11" text-anchor="middle">—</text>
+      <text x="528" y="146" fill="#2e3140" font-size="11" text-anchor="middle">—</text>
+      <text x="570" y="146" fill="#2e3140" font-size="11" text-anchor="middle">—</text>
+
+      <!-- len / cap brackets -->
+      <path d="M340,162 L340,172 L464,172 L464,162" stroke="#34d399" stroke-width="1" fill="none"/>
+      <text x="402" y="184" fill="#34d399" font-size="9" text-anchor="middle">len = 3 (used)</text>
+      <path d="M340,188 L340,198 L593,198 L593,188" stroke="#fbbf24" stroke-width="1" fill="none"/>
+      <text x="467" y="212" fill="#fbbf24" font-size="9" text-anchor="middle">cap = 6 (allocated)</text>
+    </svg>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Method</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>.push(v)</code></td>          <td>Appends <code>v</code> to the end.</td></tr>
+          <tr><td><code>.pop()</code></td>            <td>Removes and discards the last element.</td></tr>
+          <tr><td><code>.push_front(v)</code></td>   <td>Inserts <code>v</code> at index 0.</td></tr>
+          <tr><td><code>.pop_front()</code></td>     <td>Removes the element at index 0.</td></tr>
+          <tr><td><code>.insert(i, v)</code></td>    <td>Inserts <code>v</code> before index <code>i</code>.</td></tr>
+          <tr><td><code>.remove_at(i)</code></td>    <td>Removes the element at index <code>i</code>.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+<pre>v: <span class="ty">Array</span>&lt;<span class="ty">i32</span>&gt; = [];
+
+v.<span class="fn">push</span>(6);
+v.<span class="fn">push</span>(1); v.<span class="fn">push</span>(2); v.<span class="fn">push</span>(3);
+v.<span class="fn">push_front</span>(0);     <span class="cmt">// inserts 0 at the front</span>
+v.<span class="fn">insert</span>(2, 12);    <span class="cmt">// inserts 12 at index 2</span>
+v.<span class="fn">pop</span>();            <span class="cmt">// removes last element</span>
+v.<span class="fn">pop_front</span>();      <span class="cmt">// removes first element</span>
+v.<span class="fn">remove_at</span>(2);    <span class="cmt">// removes element at index 2</span>
+
+len: <span class="ty">i32</span> = <span class="fn">length</span>(v);
+<span class="fn">println</span>(v[0]);</pre>
+
+    <!-- 3.2 HashMap -->
+    <h3 class="sub-title" id="hashmap">HashMap — <code>Hashmap&lt;Ta, Tb&gt;</code></h3>
+
+    <p>
+      A <code>Hashmap&lt;Ta, Tb&gt;</code> maps keys of type <code>Ta</code> to values of type
+      <code>Tb</code> using a hash table. It is declared with an empty brace literal <code>{}</code>
+      and entries are read and written using bracket-index syntax identical to array access.
+    </p>
+
+<pre>score: <span class="ty">Hashmap</span>&lt;<span class="ty">string</span>, <span class="ty">i32</span>&gt; = {};
+score[<span class="str">"alice"</span>] = 100;
+<span class="fn">println</span>(score[<span class="str">"alice"</span>]); <span class="cmt">// 100</span></pre>
+  </section>
+
+  <!-- ══════════════════════════════════════ 4. CONTROL FLOW -->
+  <section id="controlflow">
+    <h2 class="section-title">Control Flow</h2>
+
+    <h3 class="sub-title" id="block-expressions">Block Expressions</h3>
+    <p>
+      Any pair of braces <code>{ }</code> introduces a new scope in Risk. Variables declared inside
+      a block are destroyed when the block exits. Blocks can appear anywhere a statement is valid —
+      including as the bodies of functions, loops, and branches, or as standalone scope delimiters
+      for lifetime management.
+    </p>
+
+<pre><span class="kw">func</span> <span class="fn">main</span>() -&gt; <span class="ty">i32</span> {
+    <span class="cmt">// outer scope</span>
+    {
+        <span class="cmt">// inner scope — variables here do not leak out</span>
+    }
+    <span class="kw">return</span> 0;
+}</pre>
+
+    <h3 class="sub-title" id="if-elseif-else">If/ else if /else</h3>
+    <p>
+      Conditional branching uses the familiar <code>if</code> / <code>else if</code> / <code>else</code>
+      chain. The condition is a boolean expression enclosed in parentheses. Each branch body is
+      wrapped in braces. Multiple <code>else if</code> clauses can be chained before an optional
+      <code>else</code> fallthrough.
+    </p>
+
+<pre>x: <span class="ty">i32</span> = 16;
+<span class="kw">if</span>(x > 0) {
+    <span class="fn">println</span>(<span class="str">"positive"</span>);
+} <span class="kw">else if</span>(x &lt; 0) {
+    <span class="fn">println</span>(<span class="str">"negative"</span>);
+} <span class="kw">else</span> {
+    <span class="fn">println</span>(<span class="str">"zero"</span>);
+}</pre>
+
+    <h3 class="sub-title" id="switch-statement">Switch Statement</h3>
+    <p>
+      The <code>switch</code> statement dispatches on an integer or comparable value. Each
+      <code>case</code> label is followed by a braced body. A <code>break</code> at the end of each
+      case prevents fall-through to the next. A <code>default</code> case catches all values not
+      matched by an explicit label.
+    </p>
+
+<pre><span class="kw">switch</span>(val) {
+    <span class="kw">case</span> 1 { <span class="fn">println</span>(1); <span class="kw">break</span>; }
+    <span class="kw">case</span> 2 { <span class="fn">println</span>(2); <span class="kw">break</span>; }
+    <span class="kw">case</span> 3 { <span class="fn">println</span>(3); <span class="kw">break</span>; }
+    <span class="kw">default</span> { <span class="fn">println</span>(<span class="str">"unhandled"</span>); }
+}</pre>
+
+    <h3 class="sub-title" id="for-loop">For Loop</h3>
+    <p>
+      The <code>for</code> loop uses a C-style three-clause header: initializer, condition, and
+      post-iteration expression. The loop variable is scoped to the loop body. <code>break</code>
+      exits the loop immediately; <code>continue</code> skips to the next iteration.
+    </p>
+
+<pre><span class="kw">for</span>(i: <span class="ty">i32</span> = 0; i &lt; 5; i++) {
+    <span class="kw">if</span> (i == 4) <span class="kw">break</span>;     <span class="cmt">// exits loop</span>
+    <span class="kw">if</span> (i == 2) <span class="kw">continue</span>;  <span class="cmt">// skips iteration</span>
+    <span class="fn">println</span>(i);
+}</pre>
+
+    <h3 class="sub-title" id="while-loop">While Loop</h3>
+    <p>
+      The <code>while</code> loop evaluates a boolean condition before each iteration and repeats
+      the body for as long as it holds true.
+    </p>
+
+<pre><span class="kw">while</span>(i &lt; 10) {
+    <span class="cmt">// body</span>
+}</pre>
+  </section>
+
+  <!-- ══════════════════════════════════════ 5. FUNCTIONS -->
+  <section id="functions">
+    <h2 class="section-title">Functions</h2>
+
+    <h3 class="sub-title" id="func-decl">Declaration &amp; Definition</h3>
+    <p>
+      In Risk, functions are declared and defined in a single step using the <code>func</code>
+      keyword. There is no separate forward-declaration or prototype step. The return type follows
+      a <code>-&gt;</code> arrow after the parameter list. Functions with no meaningful return value
+      use <code>void</code>.
+    </p>
+				<div class="callout note">
+					<span class="callout-icon">i</span>
+					<div class="callout-body">
+						<strong>Entry Point</strong>	
+						Risk has an entry point function called main.
+					</div>
+				</div>
+<pre><span class="cmt">// SYNTAX: func name(param: Type, ...) -&gt; ReturnType { body }</span>
+
+<span class="kw">func</span> <span class="fn">add</span>(a: <span class="ty">i32</span>, b: <span class="ty">i32</span>) -&gt; <span class="ty">i32</span> {
+    <span class="kw">return</span> a + b;
+}
+
+res: <span class="ty">i32</span> = <span class="fn">add</span>(5, 2); <span class="cmt">// 7</span></pre>
+
+    <h3 class="sub-title" id="func-ptrs">Function Pointers</h3>
+    <p>
+      A function pointer stores the address of a function with a specific signature and can be
+      called indirectly through the pointer variable. The type of a function pointer is written as
+      <code>func(ParamTypes...) -&gt; ReturnType</code>. Function pointers can be passed as arguments
+      to other functions, enabling higher-order patterns without closures.
+    </p>
+
+<pre><span class="kw">func</span> <span class="fn">times2</span>(x: <span class="ty">i32</span>) -&gt; <span class="ty">i32</span> {
+    <span class="kw">return</span> x * 2;
+}
+
+<span class="kw">func</span> <span class="fn">applyFn</span>(f: <span class="kw">func</span>(<span class="ty">i32</span>) -&gt; <span class="ty">i32</span>, v: <span class="ty">i32</span>) -&gt; <span class="ty">i32</span> {
+    <span class="kw">return</span> f(v);
+}
+
+fp: <span class="kw">func</span>(<span class="ty">i32</span>) -&gt; <span class="ty">i32</span> = times2;
+
+<span class="fn">println</span>(fp(5));              <span class="cmt">// 10</span>
+<span class="fn">println</span>(<span class="fn">applyFn</span>(times2, 5)); <span class="cmt">// 10</span></pre>
+
+    <!-- DIAGRAM: Function pointer call chain -->
+    <svg viewBox="0 0 620 220" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:620px;display:block;margin:1rem 0 1.6rem;font-family:'Segoe UI',system-ui,sans-serif;">
+      <defs>
+        <marker id="arrF" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#5b8dee"/>
+        </marker>
+        <marker id="arrF2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#34d399"/>
+        </marker>
+        <marker id="arrF3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#a78bfa"/>
+        </marker>
+      </defs>
+
+      <!-- Row 1: direct fp call -->
+      <text x="10" y="18" fill="#7c87a6" font-size="10" font-weight="600">Direct call via function pointer variable</text>
+
+      <!-- times2 function box -->
+      <rect x="10" y="26" width="130" height="52" rx="6" fill="#20232c" stroke="#34d399" stroke-width="1.5"/>
+      <text x="75" y="43" fill="#7c87a6" font-size="9" text-anchor="middle">function definition</text>
+      <text x="75" y="60" fill="#34d399" font-size="12" text-anchor="middle" font-family="'Cascadia Code','Fira Code',monospace">times2</text>
+      <text x="75" y="72" fill="#7c87a6" font-size="9" text-anchor="middle">(i32) → i32</text>
+
+      <!-- arrow: times2 → fp -->
+      <line x1="140" y1="52" x2="200" y2="52" stroke="#5b8dee" stroke-width="1.6" marker-end="url(#arrF)"/>
+      <text x="170" y="46" fill="#7c87a6" font-size="9" text-anchor="middle">stores addr</text>
+
+      <!-- fp variable box -->
+      <rect x="202" y="26" width="130" height="52" rx="6" fill="#20232c" stroke="#5b8dee" stroke-width="1.5"/>
+      <text x="267" y="43" fill="#7c87a6" font-size="9" text-anchor="middle">func pointer var</text>
+      <text x="267" y="60" fill="#5b8dee" font-size="12" text-anchor="middle" font-family="'Cascadia Code','Fira Code',monospace">fp</text>
+      <text x="267" y="72" fill="#7c87a6" font-size="9" text-anchor="middle">func(i32) → i32</text>
+
+      <!-- arrow: fp call → result -->
+      <line x1="332" y1="52" x2="392" y2="52" stroke="#34d399" stroke-width="1.6" marker-end="url(#arrF2)"/>
+      <text x="362" y="46" fill="#7c87a6" font-size="9" text-anchor="middle">fp(5)</text>
+
+      <!-- result box -->
+      <rect x="394" y="26" width="100" height="52" rx="6" fill="#20232c" stroke="#34d399" stroke-width="1.5"/>
+      <text x="444" y="43" fill="#7c87a6" font-size="9" text-anchor="middle">result</text>
+      <text x="444" y="62" fill="#34d399" font-size="18" text-anchor="middle" font-family="'Cascadia Code','Fira Code',monospace">10</text>
+
+      <line x1="1" y1="100" x2="619" y2="100" stroke="#2e3140" stroke-width="1" stroke-dasharray="4,3"/>
+
+      <!-- Row 2: higher-order call via applyFn -->
+      <text x="10" y="118" fill="#7c87a6" font-size="10" font-weight="600">Higher-order call — passing a function as an argument</text>
+
+      <!-- times2 box -->
+      <rect x="10" y="126" width="115" height="52" rx="6" fill="#20232c" stroke="#34d399" stroke-width="1.5"/>
+      <text x="67" y="143" fill="#7c87a6" font-size="9" text-anchor="middle">function</text>
+      <text x="67" y="160" fill="#34d399" font-size="12" text-anchor="middle" font-family="'Cascadia Code','Fira Code',monospace">times2</text>
+
+      <!-- curved arrow into applyFn -->
+      <path d="M125,152 C165,152 165,162 200,162" stroke="#a78bfa" stroke-width="1.6" fill="none" marker-end="url(#arrF3)"/>
+      <text x="162" y="148" fill="#7c87a6" font-size="9" text-anchor="middle">passed as f</text>
+
+      <!-- value 5 box -->
+      <rect x="10" y="182" width="115" height="36" rx="6" fill="#12141a" stroke="#2e3140" stroke-width="1"/>
+      <text x="67" y="198" fill="#7c87a6" font-size="9" text-anchor="middle">argument</text>
+      <text x="67" y="212" fill="#fbbf24" font-size="11" text-anchor="middle" font-family="'Cascadia Code','Fira Code',monospace">v = 5</text>
+      <path d="M125,200 C165,200 165,178 200,172" stroke="#fbbf24" stroke-width="1.3" fill="none" stroke-dasharray="4,2" marker-end="url(#arrF3)"/>
+
+      <!-- applyFn box -->
+      <rect x="202" y="126" width="150" height="86" rx="6" fill="#20232c" stroke="#a78bfa" stroke-width="1.5"/>
+      <text x="277" y="145" fill="#7c87a6" font-size="9" text-anchor="middle">higher-order function</text>
+      <text x="277" y="163" fill="#a78bfa" font-size="12" text-anchor="middle" font-family="'Cascadia Code','Fira Code',monospace">applyFn</text>
+      <text x="277" y="178" fill="#7c87a6" font-size="9" text-anchor="middle">(f, v) → calls f(v)</text>
+      <text x="277" y="204" fill="#7c87a6" font-size="9" text-anchor="middle">f is func(i32)→i32</text>
+
+      <!-- arrow to result -->
+      <line x1="352" y1="168" x2="410" y2="168" stroke="#34d399" stroke-width="1.6" marker-end="url(#arrF2)"/>
+
+      <!-- result -->
+      <rect x="412" y="143" width="100" height="52" rx="6" fill="#20232c" stroke="#34d399" stroke-width="1.5"/>
+      <text x="462" y="162" fill="#7c87a6" font-size="9" text-anchor="middle">result</text>
+      <text x="462" y="181" fill="#34d399" font-size="18" text-anchor="middle" font-family="'Cascadia Code','Fira Code',monospace">10</text>
+    </svg>
+
+    <h3 class="sub-title" id="typealiases">Type Aliases</h3>
+    <p>
+      The <code>typealias</code> keyword creates a named synonym for any type, including function
+      pointer types. Aliases are interchangeable with the types they alias and are particularly
+      useful for giving long function-pointer signatures readable names.
+    </p>
+
+<pre><span class="kw">typealias</span> CallbackI8ToStr = <span class="kw">func</span>(<span class="ty">i8</span>) -&gt; <span class="ty">string</span>;
+
+x: CallbackI8ToStr = someValidFunc; <span class="cmt">// cleaner than the full signature</span>
+
+<span class="kw">typealias</span> str = <span class="ty">string</span>;
+
+y: str;     <span class="cmt">// valid</span>
+z: <span class="ty">string</span>; <span class="cmt">// also valid — aliases are purely syntactic</span></pre>
+
+    <h3 class="sub-title" id="lambdas">Lambda / Closure Functions</h3>
+    <p>
+      Risk supports anonymous function literals (lambdas). A lambda is defined inline with a
+      capture clause (<code>(...)</code> for capturing the environment) followed by a parameter list
+      in brackets and a braced body. Lambdas can be stored in function-pointer variables and called
+      by name.
+    </p>
+
+<pre><span class="cmt">// No-parameter lambda</span>
+greet: <span class="kw">func</span>() -&gt; <span class="ty">void</span> = (...)[]{
+    <span class="fn">println</span>(<span class="str">"Hello World!!!"</span>);
+};
+<span class="fn">greet</span>();
+
+<span class="cmt">// Lambda with parameters</span>
+add: <span class="kw">func</span>(<span class="ty">i32</span>, <span class="ty">i32</span>) -&gt; <span class="ty">i32</span> = (...)[a: <span class="ty">i32</span>, b: <span class="ty">i32</span>] {
+    <span class="kw">return</span> a + b;
+};
+res: <span class="ty">i32</span> = <span class="fn">add</span>(1, 2); <span class="cmt">// 3</span></pre>
+  </section>
+
+  <!-- ══════════════════════════════════════ 6. STRUCTURES -->
+  <section id="structures">
+    <h2 class="section-title">Structures</h2>
+
+    <h3 class="sub-title">Block Structures</h3>
+    <p>
+      In Risk, a <code>block</code> is a composite data type that groups a contiguous list of named
+      fields, each of which can be a primitive, another block, or even a function pointer. Blocks
+      are analogous to structs in C. Fields can have optional default values that are used when the
+      field is not explicitly provided during initialization.
+    </p>
+
+    <h4 class="mini-title">Block Declaration</h4>
+
+<pre><span class="cmt">/* SYNTAX:
+   block Name {
+       fieldName: Type;
+       fieldName: Type = defaultValue;
+   } */</span>
+
+<span class="kw">block</span> Person {
+    name:        <span class="ty">string</span>;
+    age:         <span class="ty">i32</span>;
+    dateOfBirth: Date;             <span class="cmt">// nested block</span>
+    print:       <span class="kw">func</span>(p: Person) -&gt; <span class="ty">void</span>; <span class="cmt">// function pointer field</span>
+    male:        <span class="ty">bool</span>;
+    occupation:  <span class="ty">string</span> = <span class="str">"Student"</span>; <span class="cmt">// default value</span>
+}</pre>
+
+    <h4 class="mini-title">Field Assignment — Three Styles</h4>
+
+    <p>Risk supports three distinct ways to initialize a block instance, suited to different use cases:</p>
+
+    <!-- DIAGRAM: Three block assignment styles -->
+    <svg viewBox="0 0 620 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:620px;display:block;margin:1rem 0 1.4rem;font-family:'Segoe UI',system-ui,sans-serif;">
+
+      <!-- Legend -->
+      <rect x="10" y="8" width="12" height="12" rx="2" fill="#34d399" opacity="0.8"/>
+      <text x="26" y="19" fill="#34d399" font-size="10">explicitly set</text>
+      <rect x="120" y="8" width="12" height="12" rx="2" fill="#2e3140"/>
+      <text x="136" y="19" fill="#7c87a6" font-size="10">using default</text>
+
+      <!-- Style 1: Manual -->
+      <rect x="10" y="28" width="183" height="165" rx="7" fill="#20232c" stroke="#5b8dee" stroke-width="1.5"/>
+      <text x="101" y="47" fill="#5b8dee" font-size="10.5" font-weight="700" text-anchor="middle">① Manual</text>
+      <text x="101" y="60" fill="#7c87a6" font-size="9" text-anchor="middle">set each field by dot notation</text>
+
+      <rect x="22" y="68" width="159" height="26" rx="4" fill="#34d399" opacity="0.15" stroke="#34d399" stroke-width="1"/>
+      <text x="102" y="85" fill="#34d399" font-size="10.5" text-anchor="middle" font-family="'Cascadia Code','Fira Code',monospace">age = 30</text>
+
+      <rect x="22" y="98" width="159" height="26" rx="4" fill="#34d399" opacity="0.15" stroke="#34d399" stroke-width="1"/>
+      <text x="102" y="115" fill="#34d399" font-size="10.5" text-anchor="middle" font-family="'Cascadia Code','Fira Code',monospace">name = "Sponge bob"</text>
+
+      <rect x="22" y="128" width="159" height="26" rx="4" fill="#34d399" opacity="0.15" stroke="#34d399" stroke-width="1"/>
+      <text x="102" y="145" fill="#34d399" font-size="10.5" text-anchor="middle" font-family="'Cascadia Code','Fira Code',monospace">active = false</text>
+
+      <text x="101" y="184" fill="#7c87a6" font-size="9" text-anchor="middle">all fields touched explicitly</text>
+
+      <!-- Style 2: Named -->
+      <rect x="218" y="28" width="183" height="165" rx="7" fill="#20232c" stroke="#a78bfa" stroke-width="1.5"/>
+      <text x="309" y="47" fill="#a78bfa" font-size="10.5" font-weight="700" text-anchor="middle">② Named</text>
+      <text x="309" y="60" fill="#7c87a6" font-size="9" text-anchor="middle">only override what you need</text>
+
+      <rect x="230" y="68" width="159" height="26" rx="4" fill="#2e3140" stroke="#2e3140" stroke-width="1"/>
+      <text x="309" y="85" fill="#7c87a6" font-size="10.5" text-anchor="middle" font-family="'Cascadia Code','Fira Code',monospace">age → default (18)</text>
+
+      <rect x="230" y="98" width="159" height="26" rx="4" fill="#a78bfa" opacity="0.18" stroke="#a78bfa" stroke-width="1"/>
+      <text x="309" y="115" fill="#a78bfa" font-size="10.5" text-anchor="middle" font-family="'Cascadia Code','Fira Code',monospace">name = "Bob"</text>
+
+      <rect x="230" y="128" width="159" height="26" rx="4" fill="#2e3140" stroke="#2e3140" stroke-width="1"/>
+      <text x="309" y="145" fill="#7c87a6" font-size="10.5" text-anchor="middle" font-family="'Cascadia Code','Fira Code',monospace">active → default (true)</text>
+
+      <text x="309" y="184" fill="#7c87a6" font-size="9" text-anchor="middle">grayed = untouched defaults</text>
+
+      <!-- Style 3: Positional -->
+      <rect x="426" y="28" width="183" height="165" rx="7" fill="#20232c" stroke="#fbbf24" stroke-width="1.5"/>
+      <text x="517" y="47" fill="#fbbf24" font-size="10.5" font-weight="700" text-anchor="middle">③ Positional</text>
+      <text x="517" y="60" fill="#7c87a6" font-size="9" text-anchor="middle">all values in declared order</text>
+
+      <rect x="438" y="68" width="159" height="26" rx="4" fill="#fbbf24" opacity="0.14" stroke="#fbbf24" stroke-width="1"/>
+      <text x="517" y="85" fill="#fbbf24" font-size="10.5" text-anchor="middle" font-family="'Cascadia Code','Fira Code',monospace">21  ← age</text>
+
+      <rect x="438" y="98" width="159" height="26" rx="4" fill="#fbbf24" opacity="0.14" stroke="#fbbf24" stroke-width="1"/>
+      <text x="517" y="115" fill="#fbbf24" font-size="10.5" text-anchor="middle" font-family="'Cascadia Code','Fira Code',monospace">"Root"  ← name</text>
+
+      <rect x="438" y="128" width="159" height="26" rx="4" fill="#fbbf24" opacity="0.14" stroke="#fbbf24" stroke-width="1"/>
+      <text x="517" y="145" fill="#fbbf24" font-size="10.5" text-anchor="middle" font-family="'Cascadia Code','Fira Code',monospace">false  ← active</text>
+
+      <text x="517" y="184" fill="#f87171" font-size="9" text-anchor="middle">⚠ wrong order = silent bug</text>
+    </svg>
+
+    <p><strong>1. Manual field assignment</strong> — Declare the variable first, then set each field individually using dot notation. Fields with default values are already populated; only fields you care about need to be touched.</p>
+
+<pre>u1: User;
+u1.age    = 30;
+u1.name   = <span class="str">"Sponge bob"</span>;
+u1.active = <span class="kw">false</span>;</pre>
+
+    <p><strong>2. Named field assignment</strong> — Initialize specific fields by name in a brace literal. Any field not mentioned keeps its declared default value. This is the most explicit and readable style when only a subset of fields differs from defaults.</p>
+
+<pre>u2: User = {name = <span class="str">"Bob"</span>};            <span class="cmt">// age and active use defaults</span>
+u3: User = {age = 21, name = <span class="str">"Robot"</span>}; <span class="cmt">// active uses default</span></pre>
+
+    <p><strong>3. Positional field assignment</strong> — Provide all field values in the exact order they were declared. This is the most compact style but requires knowing the declaration order precisely.</p>
+
+    <div class="callout warning">
+      <span class="callout-icon">⚠</span>
+      <div class="callout-body">
+        <strong>Order matters</strong>
+        Positional initialization is sensitive to declaration order. Swapping values for
+        fields of different types may silently compile and produce wrong results.
+      </div>
+    </div>
+
+<pre><span class="kw">block</span> User {
+    age:    <span class="ty">i32</span>    = 18;
+    name:   <span class="ty">string</span>;
+    active: <span class="ty">bool</span>   = <span class="kw">true</span>;
+}
+
+u4: User = {21, <span class="str">"Root"</span>, <span class="kw">false</span>}; <span class="cmt">// VALID — matches declaration order</span>
+<span class="cmt">// u4: User = {21, false, "Root"}; // BAD — wrong order</span></pre>
+  </section>
+
+  <!-- ══════════════════════════════════════ OPTS -->
+  <section id="opts">
+    <h2 class="section-title">Opts (Enumerations)</h2>
+
+    <p>
+      An <code>opts</code> declaration defines a named set of mutually exclusive symbolic constants,
+      each backed by an integer value. The name "opts" reflects their purpose: they describe
+      the available <em>options</em> that a variable of that type can take — a more intuitive framing
+      than the traditional "enumeration". Each variant is referenced by the type name followed by
+      a dot, yielding the underlying integer value. This makes opts suitable for state machines,
+      status codes, direction flags, and anywhere a value must belong to a closed, well-named set.
+    </p>
+
+    <p>
+      Variant values can be assigned explicitly. If a variant has no explicit value, it automatically
+      takes the value of the previous variant plus one, beginning from the last explicitly set value.
+      This allows sparse or semantically grouped numbering without listing every value manually.
+    </p>
+
+    <!-- DIAGRAM: Opts auto-increment chain -->
+    <svg viewBox="0 0 620 130" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:620px;display:block;margin:1rem 0 1.4rem;font-family:'Segoe UI',system-ui,sans-serif;">
+      <defs>
+        <marker id="arrO" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#a78bfa"/>
+        </marker>
+      </defs>
+
+      <text x="10" y="16" fill="#7c87a6" font-size="10" font-weight="600">opts Direction — auto-increment from explicit anchor</text>
+
+      <!-- North: explicit -->
+      <rect x="10" y="26" width="110" height="56" rx="6" fill="#20232c" stroke="#34d399" stroke-width="2"/>
+      <text x="65" y="45" fill="#7c87a6" font-size="10" text-anchor="middle">North</text>
+      <text x="65" y="65" fill="#34d399" font-size="20" text-anchor="middle" font-family="'Cascadia Code','Fira Code',monospace">0</text>
+      <text x="65" y="94" fill="#34d399" font-size="9" text-anchor="middle">explicit = 0</text>
+
+      <!-- +1 arrow -->
+      <line x1="120" y1="54" x2="158" y2="54" stroke="#a78bfa" stroke-width="1.6" marker-end="url(#arrO)"/>
+      <text x="139" y="47" fill="#a78bfa" font-size="10" text-anchor="middle">+1</text>
+
+      <!-- East: auto -->
+      <rect x="160" y="26" width="110" height="56" rx="6" fill="#20232c" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <text x="215" y="45" fill="#7c87a6" font-size="10" text-anchor="middle">East</text>
+      <text x="215" y="65" fill="#a78bfa" font-size="20" text-anchor="middle" font-family="'Cascadia Code','Fira Code',monospace">1</text>
+      <text x="215" y="94" fill="#7c87a6" font-size="9" text-anchor="middle">auto = 0+1</text>
+
+      <!-- +1 arrow -->
+      <line x1="270" y1="54" x2="308" y2="54" stroke="#a78bfa" stroke-width="1.6" marker-end="url(#arrO)"/>
+      <text x="289" y="47" fill="#a78bfa" font-size="10" text-anchor="middle">+1</text>
+
+      <!-- South: auto -->
+      <rect x="310" y="26" width="110" height="56" rx="6" fill="#20232c" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <text x="365" y="45" fill="#7c87a6" font-size="10" text-anchor="middle">South</text>
+      <text x="365" y="65" fill="#a78bfa" font-size="20" text-anchor="middle" font-family="'Cascadia Code','Fira Code',monospace">2</text>
+      <text x="365" y="94" fill="#7c87a6" font-size="9" text-anchor="middle">auto = 1+1</text>
+
+      <!-- +1 arrow -->
+      <line x1="420" y1="54" x2="458" y2="54" stroke="#a78bfa" stroke-width="1.6" marker-end="url(#arrO)"/>
+      <text x="439" y="47" fill="#a78bfa" font-size="10" text-anchor="middle">+1</text>
+
+      <!-- West: auto -->
+      <rect x="460" y="26" width="110" height="56" rx="6" fill="#20232c" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <text x="515" y="45" fill="#7c87a6" font-size="10" text-anchor="middle">West</text>
+      <text x="515" y="65" fill="#a78bfa" font-size="20" text-anchor="middle" font-family="'Cascadia Code','Fira Code',monospace">3</text>
+      <text x="515" y="94" fill="#7c87a6" font-size="9" text-anchor="middle">auto = 2+1</text>
+
+      <!-- legend -->
+      <rect x="10" y="112" width="10" height="10" rx="2" fill="#34d399"/>
+      <text x="24" y="121" fill="#34d399" font-size="9">explicit anchor</text>
+      <rect x="120" y="112" width="10" height="10" rx="2" fill="#20232c" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="4,2"/>
+      <text x="134" y="121" fill="#a78bfa" font-size="9">auto-incremented</text>
+    </svg>
+
+<pre><span class="cmt">// Basic opts with explicit values</span>
+<span class="kw">opts</span> Color {
+    Red    = 0,
+    Green  = 1,
+    Blue   = 2,
+    Yellow = 3
+}
+
+<span class="cmt">// Semantically grouped status codes</span>
+<span class="kw">opts</span> Status {
+    Pending    = 100,
+    InProgress = 200,
+    Completed  = 300,
+    Failed     = 400
+}
+
+<span class="cmt">// Auto-increment: East=1, South=2, West=3</span>
+<span class="kw">opts</span> Direction {
+    North = 0,
+    East,
+    South,
+    West
+}
+
+<span class="cmt">// Usage — opts resolve to their underlying integer</span>
+c: <span class="ty">i32</span> = Color.Red;  <span class="cmt">// 0</span>
+<span class="fn">println</span>(c);</pre>
+  </section>
+
+  <!-- ══════════════════════════════════════ OPERATORS -->
+  <section id="operators">
+    <h2 class="section-title">Operators</h2>
+
+    <h3 class="sub-title">Arithmetic</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Operator</th><th>Operation</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><code>+</code></td>  <td>Addition</td>             <td><code>r = 5 + 3; // 8</code></td></tr>
+          <tr><td><code>-</code></td>  <td>Subtraction</td>          <td><code>r = 10 - 4; // 6</code></td></tr>
+          <tr><td><code>*</code></td>  <td>Multiplication</td>        <td><code>r = 6 * 7; // 42</code></td></tr>
+          <tr><td><code>/</code></td>  <td>Division (truncating)</td> <td><code>r = 10 / 3; // 3</code></td></tr>
+          <tr><td><code>+=</code></td> <td>Add-assign</td>            <td><code>r += 5;</code></td></tr>
+          <tr><td><code>-=</code></td> <td>Subtract-assign</td>       <td><code>r -= 5;</code></td></tr>
+          <tr><td><code>*=</code></td> <td>Multiply-assign</td>       <td><code>r *= 5;</code></td></tr>
+          <tr><td><code>/=</code></td> <td>Divide-assign</td>         <td><code>r /= 5;</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout note">
+      <span class="callout-icon">ℹ</span>
+      <div class="callout-body">
+        Integer division in Risk truncates toward zero — dividing two integers always yields an
+        integer. To get a floating-point result, cast at least one operand to a float type first.
+      </div>
+    </div>
+
+    <h3 class="sub-title">Increment / Decrement</h3>
+    <p>
+      Both prefix and postfix forms of <code>++</code> and <code>--</code> are supported. The
+      postfix form returns the value before modification; the prefix form modifies the variable first
+      and returns the new value.
+    </p>
+
+<pre>x: <span class="ty">i32</span> = 10;
+<span class="fn">println</span>(x++); <span class="cmt">// prints 10, x becomes 11</span>
+<span class="fn">println</span>(++x); <span class="cmt">// x becomes 12, prints 12</span>
+<span class="fn">println</span>(x--); <span class="cmt">// prints 12, x becomes 11</span>
+<span class="fn">println</span>(--x); <span class="cmt">// x becomes 10, prints 10</span></pre>
+
+    <h3 class="sub-title">Comparison</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Operator</th><th>Meaning</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><code>==</code></td> <td>Equal to</td>             <td><code>5 == 5 → true</code></td></tr>
+          <tr><td><code>!=</code></td> <td>Not equal to</td>         <td><code>5 != 3 → true</code></td></tr>
+          <tr><td><code>&lt;</code></td>  <td>Less than</td>         <td><code>3 &lt; 10 → true</code></td></tr>
+          <tr><td><code>&lt;=</code></td><td>Less than or equal</td> <td><code>5 &lt;= 5 → true</code></td></tr>
+          <tr><td><code>&gt;</code></td>  <td>Greater than</td>      <td><code>10 &gt; 3 → true</code></td></tr>
+          <tr><td><code>&gt;=</code></td><td>Greater than or equal</td><td><code>5 &gt;= 6 → false</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="sub-title">Logical</h3>
+    <p>
+      Logical operators act on <code>bool</code> values and produce a <code>bool</code> result.
+      <code>&amp;&amp;</code> and <code>||</code> are short-circuit evaluating — the right operand is
+      only evaluated if needed.
+    </p>
+
+<pre>A: <span class="ty">bool</span> = <span class="kw">true</span>;
+B: <span class="ty">bool</span> = <span class="kw">false</span>;
+
+A &amp;&amp; B  <span class="cmt">// AND  → false</span>
+A || B  <span class="cmt">// OR   → true</span>
+!A      <span class="cmt">// NOT  → false</span></pre>
+
+    <h3 class="sub-title">Bitwise</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Op</th><th>Operation</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><code>&amp;</code></td>  <td>Bitwise AND</td> <td><code>0b1100 &amp; 0b1010 = 0b1000</code></td></tr>
+          <tr><td><code>|</code></td>  <td>Bitwise OR</td>  <td><code>0b1100 | 0b1010 = 0b1110</code></td></tr>
+          <tr><td><code>^</code></td>  <td>Bitwise XOR</td> <td><code>0b1100 ^ 0b1010 = 0b0110</code></td></tr>
+          <tr><td><code>!</code></td>  <td>Bitwise NOT</td> <td><code>!0b1100u8 = 0b0011</code></td></tr>
+          <tr><td><code>&lt;&lt;</code></td><td>Left shift</td>  <td><code>1u32 &lt;&lt; 4 = 16</code></td></tr>
+          <tr><td><code>&gt;&gt;</code></td><td>Right shift</td> <td><code>128u32 &gt;&gt; 3 = 16</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>Compound bitwise-assignment operators are supported: <code>&amp;=</code>, <code>|=</code>, <code>^=</code>, <code>&lt;&lt;=</code>, <code>&gt;&gt;=</code>.</p>
+
+<pre>a: <span class="ty">u8</span> = 0b11001010; <span class="cmt">// 202</span>
+b: <span class="ty">u8</span> = 0b10100101; <span class="cmt">// 165</span>
+
+a &amp;= b; <span class="cmt">// bitwise AND-assign</span>
+a |= b; <span class="cmt">// bitwise OR-assign</span>
+a ^= b; <span class="cmt">// bitwise XOR-assign</span></pre>
+  </section>
+
+  <!-- ══════════════════════════════════════ CASTING -->
+  <section id="casting">
+    <h2 class="section-title">Casting</h2>
+
+    <h3 class="sub-title">Safe Cast — <code>as T</code> and <code>cast&lt;T&gt;</code></h3>
+    <p>
+      The <code>as</code> keyword and the <code>cast&lt;T&gt;</code> function both perform explicit,
+      well-defined numeric conversions. If the value being cast does not fit in the target type,
+      truncation occurs — the operation completes without a runtime panic or exception. This makes
+      the programmer explicitly responsible for ensuring values are in range.
+    </p>
+
+<pre>x: <span class="ty">i64</span> = 1000;
+y: <span class="ty">i32</span> = x <span class="kw">as</span> <span class="ty">i32</span>;       <span class="cmt">// safe cast — truncates if value overflows</span>
+z: <span class="ty">f64</span> = <span class="fn">cast</span>&lt;<span class="ty">f64</span>&gt;(x);   <span class="cmt">// integer to float</span></pre>
+
+    <h3 class="sub-title">Unsafe Cast — <code>unsafe_cast&lt;T&gt;</code></h3>
+    <p>
+      <code>unsafe_cast&lt;T&gt;</code> reinterprets the raw bit pattern of a value as a completely
+      different type without any conversion arithmetic. The bit width of source and target must
+      match. This is the equivalent of C's type-punning via a union and bypasses all type safety
+      guarantees. It is intended for low-level work such as inspecting the IEEE 754 representation
+      of a float, or interfacing with hardware registers.
+    </p>
+
+    <div class="callout danger">
+      <span class="callout-icon">✕</span>
+      <div class="callout-body">
+        <strong>Use with caution</strong>
+        <code>unsafe_cast</code> gives you the raw bits with no interpretation. The result is
+        only meaningful if you know exactly what the bit pattern represents in the target type.
+        Misuse leads to undefined behavior.
+      </div>
+    </div>
+
+<pre>x: <span class="ty">char</span> = <span class="str">'A'</span>;
+b: <span class="ty">i32</span>  = <span class="fn">unsafe_cast</span>&lt;<span class="ty">i32</span>&gt;(x);
+<span class="fn">println</span>(b); <span class="cmt">// prints 65 (ASCII value of 'A')</span></pre>
+  </section>
+
+  <!-- ══════════════════════════════════════ REGISTER -->
+  <section id="register">
+    <h2 class="section-title">The <code>register</code> Keyword</h2>
+
+    <div class="callout note">
+      <span class="callout-icon">ℹ</span>
+      <div class="callout-body">
+        <strong>Not a compiler hint</strong>
+        Risk does <em>not</em> borrow the <code>register</code> keyword from C as a hint to keep a
+        variable in a CPU register for performance. In Risk, <code>register</code> is exclusively
+        for declaring memory-mapped I/O registers at specific hardware addresses.
+      </div>
+    </div>
+
+    <p>
+      Memory-mapped I/O registers are declared by specifying the hardware address in parentheses
+      after the type. This binds the variable name directly to that physical address, so any read
+      or write to the variable goes straight to the hardware peripheral — no indirection required.
+      Bitwise operators are the standard way to manipulate individual bits within a register.
+    </p>
+
+<pre><span class="cmt">// SYNTAX: name: register&lt;T&gt;(address) = value;</span>
+
+PORTA: <span class="kw">register</span>&lt;<span class="ty">u8</span>&gt;(0x05);
+PORTA |= (1 &lt;&lt; 0x5); <span class="cmt">// set bit 5 of PORTA</span></pre>
+  </section>
+  <section id="modules">
+    <h2 class="section-title">Modules &amp; Imports</h2>
+
+    <p>
+      Risk has a straightforward module system: one file, one module. If you've written some code in another <code>.risk</code> file, you pull it in with <code>import</code>. No package manifests, no magic resolution — just a path.
+    </p>
+
+    <h3 class="sub-title">Basic Import</h3>
+    <p>
+      To import another file, use <code>import</code> followed by the file path in double quotes. All public symbols from that file become available in the current scope, qualified by the file's base name.
+    </p>
+
+<pre><span class="kw">import</span> <span class="str">"file.risk"</span>;     <span class="cmt">// import a local file</span>
+<span class="kw">import</span> <span class="str">"utils/math.risk"</span>; <span class="cmt">// subdirectories work too</span></pre>
+
+    <h3 class="sub-title">Aliased Import</h3>
+    <p>
+      You can bind an import to a shorter alias using <code>as</code>. After that, every symbol from that file is accessed through the alias. This keeps call sites clean and avoids name collisions when pulling in multiple files.
+    </p>
+
+<pre><span class="kw">import</span> <span class="str">"file.risk"</span> <span class="kw">as</span> f;
+
+f.<span class="fn">functionA</span>();          <span class="cmt">// call functionA from file.risk</span>
+x: <span class="ty">i32</span> = f.<span class="fn">compute</span>(10); <span class="cmt">// use any exported symbol through the alias</span></pre>
+
+    <h3 class="sub-title">Standard Library Imports</h3>
+    <p>
+      The built-in standard library functions (I/O, math, strings, etc.) are available without any import — they're just there. However, Risk will eventually support installable standard library packages using the <code>@</code> prefix syntax, for example:
+    </p>
+
+<pre><span class="kw">import</span> <span class="str">@"tui/tui.risk"</span>;            <span class="cmt">// future: named standard library package</span>
+<span class="kw">import</span> <span class="str">@"tui/tui.risk"</span> <span class="kw">as</span> tui;    <span class="cmt">// aliased, so you call tui.draw(...) etc.</span></pre>
+
+    <div class="callout note">
+      <span class="callout-icon">ℹ</span>
+      <div class="callout-body">
+        <strong>Standard library packages are not yet available</strong>
+        The <code>@"..."</code> import syntax is reserved for upcoming standard library packages. Only regular file imports (<code>"path/to/file.risk"</code>) are supported in the current release.
+      </div>
+    </div>
+
+    <h3 class="sub-title">Summary</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Syntax</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>import "file.risk";</code></td><td>Import a local file; symbols accessed by file base name.</td></tr>
+          <tr><td><code>import "file.risk" as f;</code></td><td>Import and bind to alias <code>f</code>; call as <code>f.symbol</code>.</td></tr>
+          <tr><td><code>import @"pkg/pkg.risk";</code></td><td>Future: named standard library package.</td></tr>
+          <tr><td><code>import @"pkg/pkg.risk" as p;</code></td><td>Future: named standard library package with alias.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════ STD LIB -->
+  <section id="stdlib">
+    <h2 class="section-title">Built-in Functions &amp; Standard Library</h2>
+    <p>
+      Risk ships a standard library of built-in functions organized into functional groups.
+      All built-ins are available without any import statement.
+    </p>
+
+    <!-- I/O -->
+    <h3 class="sub-title" id="stdlib-io">I/O</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Signature</th><th>Description</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><code>print(v: any): void</code></td>    <td>Prints any value to stdout without a trailing newline.</td>          <td><code>print("Hello "); print(42);</code></td></tr>
+          <tr><td><code>println(v: any): void</code></td>  <td>Prints any value to stdout followed by a newline.</td>               <td><code>println("Hello, World!");</code></td></tr>
+          <tr><td><code>rprint(v: any): void</code></td>   <td>Like <code>print</code> but interprets ANSI escape sequences.</td>   <td><code>rprint("\x1b[31mRed\x1b[0m");</code></td></tr>
+          <tr><td><code>rprintln(v: any): void</code></td> <td>Like <code>rprint</code> but appends a newline.</td>                 <td><code>rprintln("\x1b[1mBold\x1b[0m");</code></td></tr>
+          <tr><td><code>input(): string</code></td>        <td>Reads one line from stdin, strips the trailing newline. Returns an empty string on EOF.</td> <td><code>let name = input();</code></td></tr>
+          <tr><td><code>clrscr(): void</code></td>         <td>Clears the terminal screen.</td>                                     <td><code>clrscr();</code></td></tr>
+          <tr><td><code>flush_stdout(): void</code></td>   <td>Flushes the stdout buffer, forcing all pending output to appear in the terminal immediately. Required after <code>print</code> calls in TUI or game loops where you need the full frame to land at once rather than trickle out across OS scheduling windows.</td> <td><code>print("frame..."); flush_stdout();</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Type Conversion -->
+    <h3 class="sub-title" id="stdlib-conv">Type Conversion</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Signature</th><th>Description</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><code>toInt(s: string): i32</code></td>    <td>Parses a string to an integer. Handles optional <code>+</code>/<code>-</code> and leading whitespace. Returns <code>0</code> on failure.</td>       <td><code>toInt("42"); // 42</code></td></tr>
+          <tr><td><code>toFloat(s: string): f64</code></td>  <td>Parses a string to a float. Returns <code>0.0</code> on failure.</td>                                                                               <td><code>toFloat("3.14"); // 3.14</code></td></tr>
+          <tr><td><code>toBool(s: string): bool</code></td>  <td>Interprets <code>"true"</code>, <code>"yes"</code>, <code>"on"</code>, <code>"1"</code>, <code>"t"</code>, <code>"y"</code> (case-insensitive) as <code>true</code>. All else is <code>false</code>.</td> <td><code>toBool("yes"); // true</code></td></tr>
+          <tr><td><code>toStr(v: any): string</code></td>    <td>Converts any value to its string representation.</td>                                                                                               <td><code>toStr(99); // "99"</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- General -->
+    <h3 class="sub-title" id="stdlib-general">General</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Signature</th><th>Description</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><code>length(v: any): i32</code></td><td>Returns the number of elements in an array, or the byte count of a string.</td><td><code>length([1,2,3]); // 3</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Math -->
+    <h3 class="sub-title" id="stdlib-math">Math</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Signature</th><th>Description</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><code>abs(x: f64): f64</code></td>                   <td>Absolute value.</td>                                                    <td><code>abs(-5.0); // 5.0</code></td></tr>
+          <tr><td><code>pow(base: f64, exp: f64): f64</code></td>       <td>base raised to exp.</td>                                                <td><code>pow(2.0, 8.0); // 256.0</code></td></tr>
+          <tr><td><code>sqrt(x: f64): f64</code></td>                   <td>Square root.</td>                                                        <td><code>sqrt(9.0); // 3.0</code></td></tr>
+          <tr><td><code>sq(x: f64): f64</code></td>                     <td>x squared (x * x).</td>                                                 <td><code>sq(4.0); // 16.0</code></td></tr>
+          <tr><td><code>cbrt(x: f64): f64</code></td>                   <td>Cube root.</td>                                                          <td><code>cbrt(27.0); // 3.0</code></td></tr>
+          <tr><td><code>mod(x: f64, y: f64): f64</code></td>            <td>Floating-point remainder of x / y.</td>                                 <td><code>mod(10.0, 3.0); // 1.0</code></td></tr>
+          <tr><td><code>max(a: f64, b: f64): f64</code></td>            <td>Larger of a and b.</td>                                                 <td><code>max(3.0, 7.0); // 7.0</code></td></tr>
+          <tr><td><code>min(a: f64, b: f64): f64</code></td>            <td>Smaller of a and b.</td>                                                <td><code>min(3.0, 7.0); // 3.0</code></td></tr>
+          <tr><td><code>floor(x: f64): f64</code></td>                  <td>Round down to nearest integer.</td>                                     <td><code>floor(2.9); // 2.0</code></td></tr>
+          <tr><td><code>ceil(x: f64): f64</code></td>                   <td>Round up to nearest integer.</td>                                       <td><code>ceil(2.1); // 3.0</code></td></tr>
+          <tr><td><code>round(x: f64): f64</code></td>                  <td>Round to nearest integer (half-away from zero).</td>                    <td><code>round(2.5); // 3.0</code></td></tr>
+          <tr><td><code>exp(x: f64): f64</code></td>                    <td>e raised to x.</td>                                                     <td><code>exp(1.0); // ~2.718</code></td></tr>
+          <tr><td><code>exp2(x: f64): f64</code></td>                   <td>2 raised to x.</td>                                                     <td><code>exp2(10.0); // 1024.0</code></td></tr>
+          <tr><td><code>log(x: f64): f64</code></td>                    <td>Natural logarithm (base e).</td>                                        <td><code>log(2.718); // ~1.0</code></td></tr>
+          <tr><td><code>log10(x: f64): f64</code></td>                  <td>Base-10 logarithm.</td>                                                 <td><code>log10(1000.0); // 3.0</code></td></tr>
+          <tr><td><code>log2(x: f64): f64</code></td>                   <td>Base-2 logarithm.</td>                                                  <td><code>log2(1024.0); // 10.0</code></td></tr>
+          <tr><td><code>sin(x: f64): f64</code></td>                    <td>Sine of x (radians).</td>                                               <td><code>sin(0.0); // 0.0</code></td></tr>
+          <tr><td><code>cos(x: f64): f64</code></td>                    <td>Cosine of x (radians).</td>                                             <td><code>cos(0.0); // 1.0</code></td></tr>
+          <tr><td><code>tan(x: f64): f64</code></td>                    <td>Tangent of x (radians).</td>                                            <td><code>tan(degToRad(45.0, 0.0)); // ~1.0</code></td></tr>
+          <tr><td><code>asin(x: f64): f64</code></td>                   <td>Arcsine of x. Domain: [−1, 1]. Result in radians.</td>                  <td><code>asin(1.0); // ~1.5708</code></td></tr>
+          <tr><td><code>acos(x: f64): f64</code></td>                   <td>Arccosine of x. Domain: [−1, 1]. Result in radians.</td>                <td><code>acos(1.0); // 0.0</code></td></tr>
+          <tr><td><code>atan(x: f64): f64</code></td>                   <td>Arctangent of x. Result in radians.</td>                                <td><code>atan(1.0); // ~0.7854</code></td></tr>
+          <tr><td><code>atan2(y: f64, x: f64): f64</code></td>          <td>Arctangent of y/x using sign of both to determine quadrant. Result in radians.</td><td><code>atan2(1.0, 1.0); // ~0.7854</code></td></tr>
+          <tr><td><code>sinh(x: f64): f64</code></td>                   <td>Hyperbolic sine.</td>                                                   <td><code>sinh(1.0); // ~1.1752</code></td></tr>
+          <tr><td><code>cosh(x: f64): f64</code></td>                   <td>Hyperbolic cosine.</td>                                                 <td><code>cosh(0.0); // 1.0</code></td></tr>
+          <tr><td><code>tanh(x: f64): f64</code></td>                   <td>Hyperbolic tangent.</td>                                                <td><code>tanh(1.0); // ~0.7616</code></td></tr>
+          <tr><td><code>degToRad(deg: f64, _: f64): f64</code></td>     <td>Converts degrees to radians: deg × (π / 180).</td>                      <td><code>degToRad(180.0, 0.0); // ~3.14159</code></td></tr>
+          <tr><td><code>radToDeg(rad: f64, _: f64): f64</code></td>     <td>Converts radians to degrees: rad × (180 / π).</td>                      <td><code>radToDeg(3.14159, 0.0); // ~180.0</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Strings -->
+    <h3 class="sub-title" id="stdlib-str">Strings — <code>str_*</code></h3>
+    <p>All string functions return new strings and do not modify the original.</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Signature</th><th>Description</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><code>str_length(s): i32</code></td>                              <td>Byte length of s.</td>                                                           <td><code>str_length("hello"); // 5</code></td></tr>
+          <tr><td><code>str_upper(s): string</code></td>                            <td>New uppercased copy.</td>                                                         <td><code>str_upper("hello"); // "HELLO"</code></td></tr>
+          <tr><td><code>str_lower(s): string</code></td>                            <td>New lowercased copy.</td>                                                         <td><code>str_lower("HELLO"); // "hello"</code></td></tr>
+          <tr><td><code>str_capitalize(s): string</code></td>                       <td>First char uppercased, rest lowercased.</td>                                      <td><code>str_capitalize("hELLO"); // "Hello"</code></td></tr>
+          <tr><td><code>str_substr(s, start, length): string</code></td>            <td>Substring starting at byte <code>start</code> for at most <code>length</code> bytes.</td>  <td><code>str_substr("Hello", 1, 3); // "ell"</code></td></tr>
+          <tr><td><code>str_find(s, substr): i32</code></td>                        <td>Index of first occurrence of substr, or −1.</td>                                 <td><code>str_find("hello", "ll"); // 2</code></td></tr>
+          <tr><td><code>str_rfind(s, substr): i32</code></td>                       <td>Index of last occurrence of substr, or −1.</td>                                  <td><code>str_rfind("hello", "l"); // 3</code></td></tr>
+          <tr><td><code>str_concat(s1, s2): string</code></td>                      <td>Concatenation of s1 and s2.</td>                                                 <td><code>str_concat("foo", "bar"); // "foobar"</code></td></tr>
+          <tr><td><code>str_replace(s, old, new): string</code></td>                <td>Replaces all occurrences of old with new.</td>                                   <td><code>str_replace("aXbXc", "X", "-"); // "a-b-c"</code></td></tr>
+          <tr><td><code>str_split(s, delim): Array&lt;string&gt;</code></td>        <td>Splits s on delim, returning an array of parts.</td>                            <td><code>str_split("a,b,c", ","); // ["a","b","c"]</code></td></tr>
+          <tr><td><code>str_join(parts, delim): string</code></td>                  <td>Joins array of strings with delim between each.</td>                             <td><code>str_join(["a","b"], ", "); // "a, b"</code></td></tr>
+          <tr><td><code>str_trim(s): string</code></td>                             <td>Strips leading and trailing whitespace.</td>                                     <td><code>str_trim("  hi  "); // "hi"</code></td></tr>
+          <tr><td><code>str_startswith(s, prefix): bool</code></td>                 <td>True if s begins with prefix.</td>                                              <td><code>str_startswith("hello", "he"); // true</code></td></tr>
+          <tr><td><code>str_endswith(s, suffix): bool</code></td>                   <td>True if s ends with suffix.</td>                                                <td><code>str_endswith("hello", "lo"); // true</code></td></tr>
+          <tr><td><code>str_contains(s, substr): bool</code></td>                   <td>True if substr appears anywhere in s.</td>                                      <td><code>str_contains("hello", "ell"); // true</code></td></tr>
+          <tr><td><code>str_to_chars(s): Array&lt;char&gt;</code></td>              <td>Returns an array of the characters in s.</td>                                   <td><code>str_to_chars("hi"); // ['h','i']</code></td></tr>
+          <tr><td><code>str_repeat(s, count): string</code></td>                    <td>s repeated count times. Returns "" for count == 0.</td>                         <td><code>str_repeat("ab", 3); // "ababab"</code></td></tr>
+          <tr><td><code>chr(n: i32): string</code></td>                             <td>ASCII character for integer n.</td>                                              <td><code>chr(65); // "A"</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- File I/O -->
+    <h3 class="sub-title" id="stdlib-fio">File I/O — <code>fio_*</code></h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Signature</th><th>Description</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><code>fio_read(path): string</code></td>                                    <td>Reads entire file contents as a string.</td>                               <td><code>fio_read("main.rk");</code></td></tr>
+          <tr><td><code>fio_bufread(path): Array&lt;string&gt;</code></td>                    <td>Reads file line by line; one string per line.</td>                         <td><code>fio_bufread("data.txt");</code></td></tr>
+          <tr><td><code>fio_write(path, content): bool</code></td>                            <td>Writes content to path, overwriting. Returns true on success.</td>         <td><code>fio_write("out.txt", "done");</code></td></tr>
+          <tr><td><code>fio_append(path, content): bool</code></td>                           <td>Appends content to path; creates file if absent. Returns true on success.</td><td><code>fio_append("log.txt", "line\n");</code></td></tr>
+          <tr><td><code>fio_bufwrite(path, lines): bool</code></td>                           <td>Writes array of strings, one per line. Returns true on success.</td>       <td><code>fio_bufwrite("out.txt", lines);</code></td></tr>
+          <tr><td><code>fio_exists(path): bool</code></td>                                    <td>True if the file exists.</td>                                              <td><code>fio_exists("cfg.txt");</code></td></tr>
+          <tr><td><code>fio_delete(path): bool</code></td>                                    <td>Deletes the file. Returns true on success.</td>                            <td><code>fio_delete("tmp.txt");</code></td></tr>
+          <tr><td><code>fio_size(path): i64</code></td>                                       <td>File size in bytes, or −1 on error.</td>                                   <td><code>fio_size("data.bin");</code></td></tr>
+          <tr><td><code>fio_copy(src, dst): bool</code></td>                                  <td>Copies src to dst. Returns true on success.</td>                           <td><code>fio_copy("a.txt", "b.txt");</code></td></tr>
+          <tr><td><code>fio_bytesread(path, buffer, count): i64</code></td>                   <td>Reads up to count raw bytes from path into buffer. Returns bytes read.</td> <td><code>fio_bytesread("img.bin", buf, 512);</code></td></tr>
+          <tr><td><code>fio_byteswrite(path, buffer, count): i64</code></td>                  <td>Writes count raw bytes from buffer to path. Returns bytes written.</td>     <td><code>fio_byteswrite("img.bin", buf, 512);</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Random -->
+    <h3 class="sub-title" id="stdlib-rand">Random — <code>rand_*</code></h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Signature</th><th>Description</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><code>rand_seed(seed: i64): void</code></td>                    <td>Seeds the RNG for reproducible sequences. Auto-seeded from system time if not called.</td><td><code>rand_seed(42);</code></td></tr>
+          <tr><td><code>rand_int(max: i32): i32</code></td>                       <td>Random integer in [0, max).</td>                                              <td><code>rand_int(100); // e.g. 57</code></td></tr>
+          <tr><td><code>rand_range(min, max: i32): i32</code></td>                <td>Random integer in [min, max).</td>                                            <td><code>rand_range(5, 15);</code></td></tr>
+          <tr><td><code>rand_float(): f64</code></td>                             <td>Random float in [0.0, 1.0).</td>                                              <td><code>rand_float(); // e.g. 0.4821</code></td></tr>
+          <tr><td><code>rand_float_range(min, max: f64): f64</code></td>          <td>Random float in [min, max).</td>                                              <td><code>rand_float_range(1.5, 3.5);</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Time -->
+    <h3 class="sub-title" id="stdlib-time">Time — <code>time_*</code></h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Signature</th><th>Description</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><code>time_now(): i64</code></td>         <td>Current Unix timestamp in whole seconds.</td>                                      <td><code>time_now();</code></td></tr>
+          <tr><td><code>time_millis(): i64</code></td>      <td>Wall-clock time in milliseconds since the Unix epoch.</td>                         <td><code>time_millis();</code></td></tr>
+          <tr><td><code>time_micros(): i64</code></td>      <td>Wall-clock time in microseconds since the Unix epoch.</td>                         <td><code>time_micros();</code></td></tr>
+          <tr><td><code>time_monotonic(): i64</code></td>   <td>Monotonically increasing nanosecond counter. Use for measuring elapsed durations.</td><td><code>time_monotonic();</code></td></tr>
+          <tr><td><code>time_sleep(ms: i32): void</code></td><td>Suspends execution for ms milliseconds.</td>                                     <td><code>time_sleep(500);</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Array Methods -->
+  <section id="stdlib-array">
+    <h2 class="section-title">Array Methods</h2>
+    <p>
+      Dynamic arrays expose their operations as method-style calls on the array variable.
+      There is no <code>array_new</code> function — allocate by declaring with an empty literal
+      <code>[]</code> and push elements in, or declare with a literal list.
+    </p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Call</th><th>Description</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><code>arr.push(v)</code></td>             <td>Appends <code>v</code> to the end of the array. This is how you grow an array after declaring it as <code>[]</code>.</td>                    <td><code>nums.push(42);</code></td></tr>
+          <tr><td><code>arr.pop()</code></td>               <td>Removes and returns the last element.</td>                                                                                                    <td><code>last: i32 = nums.pop();</code></td></tr>
+          <tr><td><code>arr.push_front(v)</code></td>       <td>Inserts <code>v</code> at index 0, shifting all existing elements right. O(n).</td>                                                          <td><code>nums.push_front(0);</code></td></tr>
+          <tr><td><code>arr.pop_front()</code></td>         <td>Removes and returns the first element, shifting the rest left. O(n).</td>                                                                    <td><code>first: i32 = nums.pop_front();</code></td></tr>
+          <tr><td><code>arr.insert(i, v)</code></td>        <td>Inserts <code>v</code> at index <code>i</code>, shifting elements from <code>i</code> onward right.</td>                                    <td><code>nums.insert(2, 99);</code></td></tr>
+          <tr><td><code>arr.remove_at(i)</code></td>        <td>Removes the element at index <code>i</code>, shifting the rest left.</td>                                                                    <td><code>nums.remove_at(0);</code></td></tr>
+          <tr><td><code>arr.clear()</code></td>             <td>Sets the array length to zero without freeing the underlying buffer. Capacity is retained.</td>                                              <td><code>nums.clear();</code></td></tr>
+          <tr><td><code>length(arr): i32</code></td>        <td>Returns the current number of elements. This is a free function, not a method.</td>                                                          <td><code>n: i32 = length(nums);</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout note">
+      <span class="callout-icon">ℹ</span>
+      <div class="callout-body">
+        <strong>Pre-allocating a fixed-size array</strong>
+        Risk has no <code>array_new(n, default)</code>. When you need a pre-filled array of known
+        size (e.g. a game board), declare it as <code>[]</code> and fill it with a
+        <code>while</code> loop:
+<pre style="margin-top:0.5rem">board: <span class="ty">Array</span>&lt;<span class="ty">i32</span>&gt; = [];
+i: <span class="ty">i32</span> = <span class="num">0</span>;
+<span class="kw">while</span> (i &lt; W * H) { board.push(<span class="num">0</span>); i = i + <span class="num">1</span>; }</pre>
+      </div>
+    </div>
+
+    <!-- Extra string functions not in the main table -->
+    <h3 class="sub-title" id="stdlib-str-extra">Additional String Functions</h3>
+    <p>These functions exist in the runtime but were missing from the main strings table.</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Signature</th><th>Description</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><code>str_capitalize(s): string</code></td>             <td>Uppercases the first character and lowercases the rest.</td>                              <td><code>str_capitalize("hELLO"); // "Hello"</code></td></tr>
+          <tr><td><code>str_rfind(s, sub): i32</code></td>                <td>Returns the index of the <em>last</em> occurrence of <code>sub</code> in <code>s</code>, or −1 if not found.</td> <td><code>str_rfind("abab", "ab"); // 2</code></td></tr>
+          <tr><td><code>str_concat(a, b): string</code></td>              <td>Concatenates two strings and returns the result.</td>                                      <td><code>str_concat("foo", "bar"); // "foobar"</code></td></tr>
+          <tr><td><code>str_chars(s): Array&lt;string&gt;</code></td>     <td>Splits a string into an array of single-character strings.</td>                           <td><code>str_chars("hi"); // ["h","i"]</code></td></tr>
+          <tr><td><code>str_char_at(s, i): string</code></td>             <td>Returns the character at index <code>i</code> as a one-character string. Returns <code>""</code> if out of bounds.</td> <td><code>str_char_at("abc", 1); // "b"</code></td></tr>
+          <tr><td><code>str_char_code(s): i32</code></td>                 <td>Returns the ASCII value of the first character of <code>s</code>.</td>                    <td><code>str_char_code("A"); // 65</code></td></tr>
+          <tr><td><code>str_from_char_code(n): string</code></td>         <td>Returns a one-character string for the given ASCII value.</td>                            <td><code>str_from_char_code(65); // "A"</code></td></tr>
+          <tr><td><code>char_to_str(c: char): string</code></td>          <td>Converts a <code>char</code> value to a <code>string</code>.</td>                        <td><code>char_to_str('Z'); // "Z"</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- TUI & Keyboard -->
+  <section id="stdlib-tui">
+    <h2 class="section-title">TUI &amp; Keyboard</h2>
+    <p>
+      Functions for building full-screen terminal applications. Raw mode disables line-buffering
+      and echo so your program receives keystrokes immediately and characters never appear
+      on screen behind your UI. Always call <code>tui_raw_mode_leave()</code> before exiting,
+      even on error, or the terminal will be left in a broken state.
+    </p>
+
+    <h3 class="sub-title">Terminal Control</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Signature</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>tui_raw_mode_enter(): void</code></td>  <td>Puts the terminal into raw mode: disables line-buffering, echo, and signal keys (Ctrl-C etc.). Also sets stdout to unbuffered so escape sequences are never split. Call once at TUI startup.</td></tr>
+          <tr><td><code>tui_raw_mode_leave(): void</code></td>  <td>Restores the terminal to the state it was in before <code>tui_raw_mode_enter()</code>. Must be called before the program exits.</td></tr>
+          <tr><td><code>flush_stdout(): void</code></td>        <td>Flushes the stdout buffer immediately. In a TUI, call this once after all draw calls for a frame so the entire frame reaches the terminal atomically.</td></tr>
+          <tr><td><code>clrscr(): void</code></td>              <td>Clears the entire terminal screen and moves the cursor to the top-left.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="sub-title">Keyboard Input</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Signature</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>kb_read_key(): i32</code></td>   <td>Blocking read. Waits until a key is pressed and returns its code. Ordinary printable characters and control characters return their ASCII value (0–127). Special keys return values ≥ 1000 (see key code table below). Requires <code>tui_raw_mode_enter()</code> to have been called.</td></tr>
+          <tr><td><code>kb_hit(): bool</code></td>        <td>Non-blocking check. Returns <code>true</code> if a key is currently available in the input buffer, <code>false</code> otherwise. Does not consume the key.</td></tr>
+          <tr><td><code>kb_read(): string</code></td>     <td>Non-blocking read. Returns the next character as a one-character string, or <code>""</code> if no key is waiting.</td></tr>
+          <tr><td><code>kb_wait(): string</code></td>     <td>Blocking read. Waits for a key and returns it as a one-character string. Does not decode escape sequences — use <code>kb_read_key()</code> for arrow keys and function keys.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="sub-title">Key Code Table</h3>
+    <p>Special key constants returned by <code>kb_read_key()</code>:</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Constant</th><th>Value</th><th>Constant</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td><code>KEY_UP</code></td>          <td>1000</td> <td><code>KEY_DOWN</code></td>       <td>1001</td></tr>
+          <tr><td><code>KEY_RIGHT</code></td>        <td>1002</td> <td><code>KEY_LEFT</code></td>       <td>1003</td></tr>
+          <tr><td><code>KEY_HOME</code></td>         <td>1004</td> <td><code>KEY_END</code></td>        <td>1005</td></tr>
+          <tr><td><code>KEY_INSERT</code></td>       <td>1006</td> <td><code>KEY_DELETE</code></td>     <td>1007</td></tr>
+          <tr><td><code>KEY_PAGE_UP</code></td>      <td>1008</td> <td><code>KEY_PAGE_DOWN</code></td>  <td>1009</td></tr>
+          <tr><td><code>KEY_F1</code>–<code>KEY_F12</code></td><td>1011–1022</td><td><code>KEY_SHIFT_UP/DOWN/RIGHT/LEFT</code></td><td>1030–1033</td></tr>
+          <tr><td><code>KEY_CTRL_UP/DOWN/RIGHT/LEFT</code></td><td>1040–1043</td><td><code>KEY_ALT_UP/DOWN/RIGHT/LEFT</code></td><td>1050–1053</td></tr>
+          <tr><td><code>KEY_ENTER</code></td>        <td>13</td>   <td><code>KEY_ESCAPE</code></td>     <td>27</td></tr>
+          <tr><td><code>KEY_BACKSPACE</code></td>    <td>127</td>  <td><code>KEY_TAB</code></td>        <td>9</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- System -->
+  <section id="stdlib-sys">
+    <h2 class="section-title">System — <code>sys_*</code></h2>
+    <p>Runtime information about the host environment. All functions take no arguments except <code>sys_env</code>.</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Signature</th><th>Description</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><code>sys_platform(): string</code></td>          <td>Returns <code>"linux"</code>, <code>"macos"</code>, <code>"windows"</code>, or <code>"unknown"</code>.</td>    <td><code>sys_platform(); // "linux"</code></td></tr>
+          <tr><td><code>sys_arch(): string</code></td>               <td>Returns <code>"x86_64"</code>, <code>"arm64"</code>, <code>"arm"</code>, <code>"x86"</code>, or <code>"unknown"</code>.</td> <td><code>sys_arch(); // "x86_64"</code></td></tr>
+          <tr><td><code>sys_hostname(): string</code></td>           <td>The machine's hostname.</td>                                                                                       <td><code>sys_hostname();</code></td></tr>
+          <tr><td><code>sys_username(): string</code></td>           <td>The current user's name from the <code>USER</code> or <code>USERNAME</code> environment variable.</td>            <td><code>sys_username();</code></td></tr>
+          <tr><td><code>sys_cwd(): string</code></td>                <td>The current working directory as an absolute path.</td>                                                            <td><code>sys_cwd();</code></td></tr>
+          <tr><td><code>sys_pid(): i64</code></td>                   <td>The process ID of the running program.</td>                                                                        <td><code>sys_pid();</code></td></tr>
+          <tr><td><code>sys_env(name: string): string</code></td>    <td>Returns the value of the named environment variable, or <code>""</code> if not set.</td>                         <td><code>sys_env("HOME");</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Memory -->
+  <section id="stdlib-mem">
+    <h2 class="section-title">Memory</h2>
+    <p>
+      Low-level memory operations. These are for advanced use — most programs do not need them.
+    </p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Signature</th><th>Description</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><code>alloc(n: i32): ptr&lt;u8&gt;</code></td>                           <td>Allocates <code>n</code> bytes on the heap and returns a raw pointer. Panics on allocation failure.</td>                    <td><code>buf: ptr&lt;u8&gt; = alloc(256);</code></td></tr>
+          <tr><td><code>sizeof(T): i32</code></td>                                          <td>Returns the size in bytes of type <code>T</code> at compile time.</td>                                                       <td><code>sizeof(i64); // 8</code></td></tr>
+          <tr><td><code>copy_mem(dst: ptr&lt;u8&gt;, src: ptr&lt;u8&gt;, n: i32): void</code></td> <td>Copies <code>n</code> bytes from <code>src</code> to <code>dst</code>. Regions must not overlap.</td>           <td><code>copy_mem(dst, src, 64);</code></td></tr>
+          <tr><td><code>set_mem(dst: ptr&lt;u8&gt;, val: i32, n: i32): void</code></td>    <td>Fills <code>n</code> bytes starting at <code>dst</code> with the byte value <code>val</code>.</td>                        <td><code>set_mem(buf, 0, 256);</code></td></tr>
+          <tr><td><code>is_inf(x: f64): bool</code></td>                                    <td>Returns <code>true</code> if <code>x</code> is positive or negative infinity.</td>                                         <td><code>is_inf(1.0 / 0.0); // true</code></td></tr>
+          <tr><td><code>is_nan(x: f64): bool</code></td>                                    <td>Returns <code>true</code> if <code>x</code> is NaN.</td>                                                                    <td><code>is_nan(NAN); // true</code></td></tr>
+          <tr><td><code>type(v: any): string</code></td>                                     <td>Returns the type name of <code>v</code> as a string at compile time.</td>                                                  <td><code>type(42); // "i32"</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+  <section id="type-cheatsheet">
+    <h2 class="section-title">Type Cheat Sheet</h2>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Category</th><th>Type(s)</th><th>Size</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Signed integers</td>  <td><code>i8 i16 i32 i64</code></td>          <td>1–8 bytes</td>          <td>Default: <code>i32</code></td></tr>
+          <tr><td>Unsigned integers</td><td><code>u8 u16 u32 u64</code></td>          <td>1–8 bytes</td>          <td><code>u8</code> = byte</td></tr>
+          <tr><td>Floats</td>           <td><code>f32 f64</code></td>                  <td>4–8 bytes</td>          <td>Default: <code>f64</code></td></tr>
+          <tr><td>Boolean</td>          <td><code>bool</code></td>                     <td>1 byte</td>             <td><code>true</code> / <code>false</code></td></tr>
+          <tr><td>Character</td>        <td><code>char</code></td>                     <td>4 bytes</td>            <td>Unicode scalar value</td></tr>
+          <tr><td>String</td>           <td><code>string</code></td>                   <td>Varies</td>             <td>Owned string value</td></tr>
+          <tr><td>Raw pointer</td>      <td><code>ptr&lt;T&gt;</code></td>             <td>Word size</td>          <td>Explicit memory access</td></tr>
+          <tr><td>Reference</td>        <td><code>ref&lt;T&gt;</code></td>             <td>Word size</td>          <td>Non-nullable alias</td></tr>
+          <tr><td>Static array</td>     <td><code>Array&lt;T, N&gt;</code></td>        <td>N × sizeof(T)</td>      <td>Stack-allocated, fixed size</td></tr>
+          <tr><td>Dynamic array</td>    <td><code>Array&lt;T&gt;</code></td>           <td>Heap</td>               <td>Growable contiguous buffer</td></tr>
+          <tr><td>Hash map</td>         <td><code>Hashmap&lt;K, V&gt;</code></td>      <td>Heap</td>               <td>Key-value hash table</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="op-precedence">
+    <h2 class="section-title">Operator Precedence</h2>
+    <p>Higher level numbers bind more loosely. When in doubt, use parentheses.</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Level</th><th>Operators</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>1 (highest)</td><td><code>() [] . :: as</code></td>                                   <td>Grouping, indexing, path, cast</td></tr>
+          <tr><td>2</td>          <td><code>! - * &amp;</code></td>                                     <td>Unary operators, dereference, address-of</td></tr>
+          <tr><td>3</td>          <td><code>* / %</code></td>                                           <td>Multiplicative</td></tr>
+          <tr><td>4</td>          <td><code>+ -</code></td>                                             <td>Additive</td></tr>
+          <tr><td>5</td>          <td><code>&lt;&lt; &gt;&gt;</code></td>                               <td>Bit shift</td></tr>
+          <tr><td>6</td>          <td><code>&amp;</code></td>                                           <td>Bitwise AND</td></tr>
+          <tr><td>7</td>          <td><code>^</code></td>                                               <td>Bitwise XOR</td></tr>
+          <tr><td>8</td>          <td><code>|</code></td>                                               <td>Bitwise OR</td></tr>
+          <tr><td>9</td>          <td><code>== != &lt; &gt; &lt;= &gt;=</code></td>                     <td>Comparison</td></tr>
+          <tr><td>10</td>         <td><code>&amp;&amp;</code></td>                                      <td>Logical AND</td></tr>
+          <tr><td>11</td>         <td><code>||</code></td>                                              <td>Logical OR</td></tr>
+          <tr><td>12 (lowest)</td><td><code>= += -= *= /= %= &amp;= ^= |= &lt;&lt;= &gt;&gt;=</code></td><td>Assignment</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════ EXAMPLES -->
+  <section id="examples">
+    <h2 class="section-title">Examples</h2>
+    <p>
+      A collection of complete, runnable Risk programs — from a terminal UI to file utilities.
+      Each example is self-contained and can be compiled with <code>riskc file.risk</code>.
+    </p>
+
+    <!-- TUI Explorer -->
+    <h3 class="sub-title" id="example-tui">TUI Explorer</h3>
+    <p>
+      A keyboard-driven terminal browser over a list of famous figures. Navigate with
+      <code>k</code>/<code>j</code>, press <code>Enter</code> to read a bio, any key to go back,
+      <code>q</code> to quit.
+    </p>
+<pre><span class="kw">func</span> <span class="fn">render_browser</span>(names: <span class="ty">Array</span>&lt;<span class="ty">string</span>&gt;, selected: <span class="ty">i32</span>, e: <span class="ty">string</span>) -&gt; <span class="ty">void</span> {
+    clrscr();
+    println(e, <span class="str">"[1;36m"</span>, <span class="str">"  Figures of History"</span>, e, <span class="str">"[0m"</span>);
+    println(e, <span class="str">"[2m"</span>,    <span class="str">"  Select a person"</span>,     e, <span class="str">"[0m"</span>);
+    println(<span class="str">"  ──────────────────────────────────"</span>);
+
+    i: <span class="ty">i32</span> = <span class="num">0</span>;
+    n: <span class="ty">i32</span> = length(names);
+    <span class="kw">while</span> (i &lt; n) {
+        <span class="kw">if</span> (i == selected) {
+            println(e, <span class="str">"[7m"</span>, <span class="str">"  &gt; "</span>, names[i], e, <span class="str">"[0m"</span>);
+        } <span class="kw">else</span> {
+            println(<span class="str">"    "</span>, names[i]);
+        }
+        i = i + <span class="num">1</span>;
+    }
+    println(<span class="str">""</span>);
+    println(e, <span class="str">"[2m"</span>, <span class="str">"  k/j navigate   Enter open   q quit"</span>, e, <span class="str">"[0m"</span>);
+    flush_stdout();
+}
+
+<span class="kw">func</span> <span class="fn">render_viewer</span>(name: <span class="ty">string</span>, bio: <span class="ty">string</span>, e: <span class="ty">string</span>) -&gt; <span class="ty">void</span> {
+    clrscr();
+    println(e, <span class="str">"[1;36m"</span>, <span class="str">"  "</span>, name, e, <span class="str">"[0m"</span>);
+    println(<span class="str">"  ──────────────────────────────────"</span>);
+    println(<span class="str">""</span>);
+    println(<span class="str">"  "</span>, bio);
+    println(<span class="str">""</span>);
+    println(e, <span class="str">"[2m"</span>, <span class="str">"  any key to go back..."</span>, e, <span class="str">"[0m"</span>);
+    flush_stdout();
+}
+
+<span class="kw">func</span> <span class="fn">main</span>() -&gt; <span class="ty">i32</span> {
+    names: <span class="ty">Array</span>&lt;<span class="ty">string</span>&gt; = [
+        <span class="str">"Albert Einstein"</span>,
+        <span class="str">"Alan Turing"</span>,
+        <span class="str">"Nikola Tesla"</span>,
+        <span class="str">"Linus Torvalds"</span>,
+        <span class="str">"Neil deGrasse Tyson"</span>
+    ];
+
+    bios: <span class="ty">Array</span>&lt;<span class="ty">string</span>&gt; = [
+        <span class="str">"Theoretical physicist. Reshaped our understanding of space, time, and gravity."</span>,
+        <span class="str">"Mathematician and father of computer science. Cracked Enigma, defined computation."</span>,
+        <span class="str">"Inventor and electrical engineer. Gave the world alternating current."</span>,
+        <span class="str">"Creator of Linux. Believes in open source, version control, and strong opinions."</span>,
+        <span class="str">"Astrophysicist and science communicator. Makes the cosmos feel personal."</span>
+    ];
+
+    e:        <span class="ty">string</span> = chr(<span class="num">27</span>);
+    selected: <span class="ty">i32</span>    = <span class="num">0</span>;
+    mode:     <span class="ty">i32</span>    = <span class="num">0</span>;
+    viewed:   <span class="ty">i32</span>    = <span class="num">0</span>;
+
+    tui_raw_mode_enter();
+    print(e, <span class="str">"[?25l"</span>);
+    flush_stdout();
+
+    running: <span class="ty">bool</span> = <span class="kw">true</span>;
+    <span class="kw">while</span> (running) {
+        <span class="kw">if</span> (mode == <span class="num">0</span>) {
+            render_browser(names, selected, e);
+            key: <span class="ty">i32</span> = kb_read_key();
+            n:   <span class="ty">i32</span> = length(names);
+
+            <span class="kw">if</span> (key == <span class="num">1000</span> || key == <span class="num">107</span>) {        <span class="cmt">// up / k</span>
+                <span class="kw">if</span> (selected &gt; <span class="num">0</span>) { selected = selected - <span class="num">1</span>; }
+            } <span class="kw">else if</span> (key == <span class="num">1001</span> || key == <span class="num">106</span>) {  <span class="cmt">// down / j</span>
+                <span class="kw">if</span> (selected &lt; n - <span class="num">1</span>) { selected = selected + <span class="num">1</span>; }
+            } <span class="kw">else if</span> (key == <span class="num">13</span>) {                   <span class="cmt">// Enter</span>
+                viewed = selected;
+                mode   = <span class="num">1</span>;
+            } <span class="kw">else if</span> (key == <span class="num">113</span> || key == <span class="num">27</span>) {   <span class="cmt">// q / Esc</span>
+                running = <span class="kw">false</span>;
+            }
+        } <span class="kw">else</span> {
+            render_viewer(names[viewed], bios[viewed], e);
+            kb_read_key();
+            mode = <span class="num">0</span>;
+        }
+    }
+
+    print(e, <span class="str">"[?25h"</span>);
+    tui_raw_mode_leave();
+    clrscr();
+    <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+
+    <!-- Hello World -->
+    <h3 class="sub-title" id="example-hello">Hello World</h3>
+    <p>The classic starting point — print a greeting and exit.</p>
+<pre><span class="kw">func</span> <span class="fn">main</span>() -&gt; <span class="ty">i32</span> {
+    println(<span class="str">"Hello, World!"</span>);
+    <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+
+    <p>Spice it up with a name argument read from the user:</p>
+<pre><span class="kw">func</span> <span class="fn">main</span>() -&gt; <span class="ty">i32</span> {
+    print(<span class="str">"Enter your name: "</span>);
+    flush_stdout();
+    name: <span class="ty">string</span> = input();
+    println(<span class="str">"Hello, "</span>, name, <span class="str">"!"</span>);
+    <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+
+    <!-- Fibonacci -->
+    <h3 class="sub-title" id="example-fib">Fibonacci</h3>
+    <p>
+      Compute and print the first <em>n</em> Fibonacci numbers iteratively,
+      then also show a recursive version for contrast.
+    </p>
+<pre><span class="cmt">// Iterative — O(n) time, O(1) space</span>
+<span class="kw">func</span> <span class="fn">fib_iter</span>(n: <span class="ty">i32</span>) -&gt; <span class="ty">void</span> {
+    a: <span class="ty">i64</span> = <span class="num">0</span>;
+    b: <span class="ty">i64</span> = <span class="num">1</span>;
+    i: <span class="ty">i32</span> = <span class="num">0</span>;
+    <span class="kw">while</span> (i &lt; n) {
+        println(a);
+        tmp: <span class="ty">i64</span> = a + b;
+        a = b;
+        b = tmp;
+        i = i + <span class="num">1</span>;
+    }
+}
+
+<span class="cmt">// Recursive — clean but exponential; fine for small n</span>
+<span class="kw">func</span> <span class="fn">fib</span>(n: <span class="ty">i32</span>) -&gt; <span class="ty">i64</span> {
+    <span class="kw">if</span> (n &lt;= <span class="num">1</span>) { <span class="kw">return</span> n; }
+    <span class="kw">return</span> fib(n - <span class="num">1</span>) + fib(n - <span class="num">2</span>);
+}
+
+<span class="kw">func</span> <span class="fn">main</span>() -&gt; <span class="ty">i32</span> {
+    println(<span class="str">"First 10 Fibonacci numbers:"</span>);
+    fib_iter(<span class="num">10</span>);
+
+    println(<span class="str">""</span>);
+    println(<span class="str">"fib(20) = "</span>, fib(<span class="num">20</span>));   <span class="cmt">// 6765</span>
+    <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+
+    <!-- File I/O -->
+    <h3 class="sub-title" id="example-fileio">File I/O</h3>
+    <p>
+      Write a few lines to a file, read them back, then append a timestamp.
+      Demonstrates <code>fio_write</code>, <code>fio_bufread</code>, and <code>fio_append</code>.
+    </p>
+<pre><span class="kw">func</span> <span class="fn">main</span>() -&gt; <span class="ty">i32</span> {
+    path: <span class="ty">string</span> = <span class="str">"notes.txt"</span>;
+
+    <span class="cmt">// Write initial content (overwrites if exists)</span>
+    ok: <span class="ty">bool</span> = fio_write(path, <span class="str">"Line one\nLine two\nLine three\n"</span>);
+    <span class="kw">if</span> (!ok) {
+        println(<span class="str">"Error: could not write file."</span>);
+        <span class="kw">return</span> <span class="num">1</span>;
+    }
+
+    <span class="cmt">// Read back line by line</span>
+    lines: <span class="ty">Array</span>&lt;<span class="ty">string</span>&gt; = fio_bufread(path);
+    i: <span class="ty">i32</span> = <span class="num">0</span>;
+    n: <span class="ty">i32</span> = length(lines);
+    <span class="kw">while</span> (i &lt; n) {
+        println(<span class="str">"  ["</span>, i, <span class="str">"] "</span>, lines[i]);
+        i = i + <span class="num">1</span>;
+    }
+
+    <span class="cmt">// Append a timestamp</span>
+    stamp: <span class="ty">i64</span>    = time_now();
+    entry: <span class="ty">string</span> = <span class="str">"Written at unix time: "</span>;
+    fio_append(path, entry);
+    fio_append(path, to_string(stamp));
+    fio_append(path, <span class="str">"\n"</span>);
+
+    sz: <span class="ty">i64</span> = fio_size(path);
+    println(<span class="str">"File size: "</span>, sz, <span class="str">" bytes"</span>);
+    <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+  </section>
+
+  <!-- ══════════════════════════════════════ SNAKE -->
+  <section id="example-snake">
+    <h2 class="section-title">Terminal Snake</h2>
+    <p>
+      A fully playable Snake game in the terminal. The snake grows each time it eats food,
+      and the game ends when it hits a wall or itself. Uses raw mode input, ANSI cursor
+      control, and a fixed-size board represented as a flat <code>Array&lt;i32&gt;</code>.
+    </p>
+    <p>
+      Controls: <code>w a s d</code> or arrow keys. <code>q</code> to quit at any time.
+    </p>
+    <div class="callout tip">
+      <span class="callout-icon">💡</span>
+      <div class="callout-body">
+        <strong>What this exercises</strong>
+        Arrays as a 2-D grid, a ring-buffer for the snake body, game-loop timing with
+        <code>time_sleep</code>, non-blocking input with <code>kb_read_key</code>, and
+        ANSI escape sequences for flicker-free rendering.
+      </div>
+    </div>
+<pre><span class="cmt">// Board is W×H cells. Cell values: 0 = empty, 1 = snake, 2 = food.</span>
+W:         <span class="ty">i32</span> = <span class="num">40</span>;
+H:         <span class="ty">i32</span> = <span class="num">20</span>;
+MAX_SNAKE: <span class="ty">i32</span> = <span class="num">800</span>;
+TICK_MS:   <span class="ty">i32</span> = <span class="num">120</span>;
+
+<span class="cmt">// Move cursor to (x, y) using ANSI escape</span>
+<span class="kw">func</span> <span class="fn">goto_xy</span>(e: <span class="ty">string</span>, x: <span class="ty">i32</span>, y: <span class="ty">i32</span>) -&gt; <span class="ty">void</span> {
+    print(e, <span class="str">"["</span>, toStr(y + <span class="num">1</span>), <span class="str">";"</span>, toStr(x + <span class="num">1</span>), <span class="str">"H"</span>);
+}
+
+<span class="kw">func</span> <span class="fn">draw_border</span>(e: <span class="ty">string</span>) -&gt; <span class="ty">void</span> {
+    row: <span class="ty">i32</span> = <span class="num">0</span>;
+    <span class="kw">while</span> (row &lt; H) {
+        goto_xy(e, <span class="num">0</span>, row);
+        print(e, <span class="str">"[90m"</span>, <span class="str">"|"</span>, e, <span class="str">"[0m"</span>);
+        goto_xy(e, W + <span class="num">1</span>, row);
+        print(e, <span class="str">"[90m"</span>, <span class="str">"|"</span>, e, <span class="str">"[0m"</span>);
+        row = row + <span class="num">1</span>;
+    }
+    col: <span class="ty">i32</span> = <span class="num">0</span>;
+    <span class="kw">while</span> (col &lt; W + <span class="num">2</span>) {
+        goto_xy(e, col, <span class="num">0</span>);
+        print(e, <span class="str">"[90m"</span>, <span class="str">"-"</span>, e, <span class="str">"[0m"</span>);
+        goto_xy(e, col, H + <span class="num">1</span>);
+        print(e, <span class="str">"[90m"</span>, <span class="str">"-"</span>, e, <span class="str">"[0m"</span>);
+        col = col + <span class="num">1</span>;
+    }
+}
+
+<span class="kw">func</span> <span class="fn">draw_cell</span>(e: <span class="ty">string</span>, x: <span class="ty">i32</span>, y: <span class="ty">i32</span>, kind: <span class="ty">i32</span>) -&gt; <span class="ty">void</span> {
+    goto_xy(e, x + <span class="num">1</span>, y + <span class="num">1</span>);
+    <span class="kw">if</span> (kind == <span class="num">1</span>) {
+        print(e, <span class="str">"[32m"</span>, <span class="str">"■"</span>, e, <span class="str">"[0m"</span>);
+    }
+    <span class="kw">if</span> (kind == <span class="num">2</span>) {
+        print(e, <span class="str">"[31m"</span>, <span class="str">"●"</span>, e, <span class="str">"[0m"</span>);
+    }
+    <span class="kw">if</span> (kind == <span class="num">0</span>) {
+        print(<span class="str">" "</span>);
+    }
+}
+
+<span class="kw">func</span> <span class="fn">spawn_food</span>(board: <span class="ty">Array</span>&lt;<span class="ty">i32</span>&gt;, fx: <span class="ty">ptr</span>&lt;<span class="ty">i32</span>&gt;, fy: <span class="ty">ptr</span>&lt;<span class="ty">i32</span>&gt;) -&gt; <span class="ty">void</span> {
+    tries: <span class="ty">i32</span> = <span class="num">0</span>;
+    <span class="kw">while</span> (tries &lt; <span class="num">1000</span>) {
+        nx: <span class="ty">i32</span> = rand_int(W);
+        ny: <span class="ty">i32</span> = rand_int(H);
+        <span class="kw">if</span> (board[ny * W + nx] == <span class="num">0</span>) {
+            *fx = nx;
+            *fy = ny;
+            board[ny * W + nx] = <span class="num">2</span>;
+            <span class="kw">return</span>;
+        }
+        tries = tries + <span class="num">1</span>;
+    }
+}
+
+<span class="kw">func</span> <span class="fn">main</span>() -&gt; <span class="ty">i32</span> {
+    e: <span class="ty">string</span> = chr(<span class="num">27</span>);
+
+    <span class="cmt">// Flat board: index = y*W + x</span>
+    board: <span class="ty">Array</span>&lt;<span class="ty">i32</span>&gt; = [];
+    i: <span class="ty">i32</span> = <span class="num">0</span>;
+    <span class="kw">while</span> (i &lt; W * H) {
+        board.push(<span class="num">0</span>);
+        i = i + <span class="num">1</span>;
+    }
+
+    <span class="cmt">// Ring-buffer arrays for snake body (x and y separately)</span>
+    sx: <span class="ty">Array</span>&lt;<span class="ty">i32</span>&gt; = [];
+    sy: <span class="ty">Array</span>&lt;<span class="ty">i32</span>&gt; = [];
+    i = <span class="num">0</span>;
+    <span class="kw">while</span> (i &lt; MAX_SNAKE) {
+        sx.push(<span class="num">0</span>);
+        sy.push(<span class="num">0</span>);
+        i = i + <span class="num">1</span>;
+    }
+
+    head: <span class="ty">i32</span> = <span class="num">0</span>;
+    tail: <span class="ty">i32</span> = <span class="num">0</span>;
+    slen: <span class="ty">i32</span> = <span class="num">1</span>;
+
+    sx[<span class="num">0</span>] = W / <span class="num">2</span>;
+    sy[<span class="num">0</span>] = H / <span class="num">2</span>;
+    board[sy[<span class="num">0</span>] * W + sx[<span class="num">0</span>]] = <span class="num">1</span>;
+
+    dx: <span class="ty">i32</span> = <span class="num">1</span>;
+    dy: <span class="ty">i32</span> = <span class="num">0</span>;
+
+    fx: <span class="ty">i32</span> = <span class="num">0</span>;
+    fy: <span class="ty">i32</span> = <span class="num">0</span>;
+    spawn_food(board, &amp;fx, &amp;fy);
+
+    score: <span class="ty">i32</span> = <span class="num">0</span>;
+
+    tui_raw_mode_enter();
+    clrscr();
+    print(e, <span class="str">"[?25l"</span>);
+    draw_border(e);
+    draw_cell(e, sx[<span class="num">0</span>], sy[<span class="num">0</span>], <span class="num">1</span>);
+    draw_cell(e, fx, fy, <span class="num">2</span>);
+    flush_stdout();
+
+    running: <span class="ty">bool</span> = <span class="kw">true</span>;
+    <span class="kw">while</span> (running) {
+        time_sleep(TICK_MS);
+
+        key: <span class="ty">i32</span> = -<span class="num">1</span>;
+        <span class="kw">while</span> (kb_hit()) {
+            key = kb_read_key();
+        }
+        <span class="kw">if</span> (key == <span class="num">119</span> || key == <span class="num">1000</span>) {
+            <span class="kw">if</span> (dy != <span class="num">1</span>) { dx = <span class="num">0</span>; dy = -<span class="num">1</span>; }
+        } else <span class="kw">if</span> (key == <span class="num">115</span> || key == <span class="num">1001</span>) {
+            <span class="kw">if</span> (dy != -<span class="num">1</span>) { dx = <span class="num">0</span>; dy = <span class="num">1</span>; }
+        } else <span class="kw">if</span> (key == <span class="num">97</span> || key == <span class="num">1003</span>) {
+            <span class="kw">if</span> (dx != <span class="num">1</span>) { dx = -<span class="num">1</span>; dy = <span class="num">0</span>; }
+        } else <span class="kw">if</span> (key == <span class="num">100</span> || key == <span class="num">1002</span>) {
+            <span class="kw">if</span> (dx != -<span class="num">1</span>) { dx = <span class="num">1</span>; dy = <span class="num">0</span>; }
+        } else <span class="kw">if</span> (key == <span class="num">113</span>) {
+            running = <span class="kw">false</span>;
+        }
+
+        nhx: <span class="ty">i32</span> = sx[head] + dx;
+        nhy: <span class="ty">i32</span> = sy[head] + dy;
+
+        <span class="kw">if</span> (nhx &lt; <span class="num">0</span> || nhx &gt;= W || nhy &lt; <span class="num">0</span> || nhy &gt;= H) {
+            running = <span class="kw">false</span>;
+        } else <span class="kw">if</span> (board[nhy * W + nhx] == <span class="num">1</span>) {
+            running = <span class="kw">false</span>;
+        } else {
+            ate: <span class="ty">bool</span> = (board[nhy * W + nhx] == <span class="num">2</span>);
+
+            head = (head + <span class="num">1</span>) % MAX_SNAKE;
+            sx[head] = nhx;
+            sy[head] = nhy;
+            board[nhy * W + nhx] = <span class="num">1</span>;
+            draw_cell(e, nhx, nhy, <span class="num">1</span>);
+
+            <span class="kw">if</span> (ate) {
+                score = score + <span class="num">1</span>;
+                slen  = slen + <span class="num">1</span>;
+                spawn_food(board, &amp;fx, &amp;fy);
+                draw_cell(e, fx, fy, <span class="num">2</span>);
+            } else {
+                tx: <span class="ty">i32</span> = sx[tail];
+                ty: <span class="ty">i32</span> = sy[tail];
+                board[ty * W + tx] = <span class="num">0</span>;
+                draw_cell(e, tx, ty, <span class="num">0</span>);
+                tail = (tail + <span class="num">1</span>) % MAX_SNAKE;
+            }
+
+            goto_xy(e, <span class="num">0</span>, H + <span class="num">2</span>);
+            print(e, <span class="str">"[2m"</span>, <span class="str">"  score: "</span>, e, <span class="str">"[0m"</span>, e, <span class="str">"[1m"</span>, toStr(score), e, <span class="str">"[0m"</span>);
+            flush_stdout();
+        }
+    }
+
+    goto_xy(e, W / <span class="num">2</span> - <span class="num">5</span>, H / <span class="num">2</span>);
+    print(e, <span class="str">"[1;31m"</span>, <span class="str">"  GAME OVER  "</span>, e, <span class="str">"[0m"</span>);
+    goto_xy(e, W / <span class="num">2</span> - <span class="num">6</span>, H / <span class="num">2</span> + <span class="num">1</span>);
+    print(e, <span class="str">"[2m"</span>, <span class="str">"  final score: "</span>, e, <span class="str">"[0m"</span>, toStr(score));
+    goto_xy(e, <span class="num">0</span>, H + <span class="num">4</span>);
+    flush_stdout();
+
+    print(e, <span class="str">"[?25h"</span>);
+    tui_raw_mode_leave();
+    <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+
+    <div class="callout warning">
+      <span class="callout-icon">⚠</span>
+      <div class="callout-body">
+        <strong>else if and inline comments</strong>
+        Do not place a <code>// comment</code> on the same line as a closing <code>}</code>
+        that is immediately followed by <code>else</code> or <code>else if</code>. The comment
+        token lands between <code>}</code> and <code>else</code> in the token stream and breaks
+        the chain. Put comments on their own line above instead.
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Risk Language Reference &bull; Revision 1.0 &bull; 2026</p>
+				<p>Author: Bayiha Hesed Charis</p>
+  </footer>
+
+</main>
+	<script>
+  const sections = document.querySelectorAll('section[id], h3[id]');
+  const links    = document.querySelectorAll('#sidebar a[href^="#"]');
+
+  // Track whether the user just clicked (suppress scroll updates briefly)
+  let clickedId   = null;
+  let clickTimer  = null;
+
+  function setActive(id) {
+    links.forEach(l => l.classList.remove('active'));
+    const a = document.querySelector(`#sidebar a[href="#${id}"]`);
+    if (a) a.classList.add('active');
+  }
+
+  // Click: lock active immediately; re-enable scroll tracking after scroll settles
+  links.forEach(link => {
+    link.addEventListener('click', () => {
+      const id = link.getAttribute('href').slice(1);
+      clickedId = id;
+      setActive(id);
+      clearTimeout(clickTimer);
+      // After ~800 ms the page has finished scrolling; hand back to the observer
+      clickTimer = setTimeout(() => { clickedId = null; }, 800);
+    });
+  });
+
+  // Scroll: only update when no recent click
+  const observer = new IntersectionObserver((entries) => {
+    if (clickedId) return; // user just clicked — don't override
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        setActive(entry.target.id);
+      }
+    });
+  }, { rootMargin: '-10% 0px -80% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+	</script>
+</body>
+</html>
