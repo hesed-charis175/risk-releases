@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-REPO="hesed-charis175/risk-releases"   # TODO: change this
+REPO="hesed-charis175/risk-releases"  
 VERSION="latest"
 BINARY_NAME="riskc"
 INSTALL_DIR="/usr/local/bin"
@@ -22,19 +22,21 @@ if [ "$ARCH" != "x86_64" ]; then
 fi
 
 BASE_URL="https://github.com/$REPO/releases/latest/download"
-BINARY_URL="$BASE_URL/riskc-linux-x86_64"
+BINARY_URL="$BASE_URL/riskc-linux-x86_64.tar.gz"
 STDLIB_URL="$BASE_URL/risk-stdlib.tar.gz"
 
 info "Downloading riskc..."
-TMP_BIN=$(mktemp)
-curl -fsSL "$BINARY_URL" -o "$TMP_BIN" \
+TMP_DIR=$(mktemp -d)
+curl -fsSL "$BINARY_URL" -o "$TMP_DIR/riskc.tar.gz" \
   || error "Failed to download binary. Check your connection or the release URL."
 
-chmod +x "$TMP_BIN"
+tar -xzf "$TMP_DIR/riskc.tar.gz" -C "$TMP_DIR"
+chmod +x "$TMP_DIR/riskc"
 
 info "Installing to $INSTALL_DIR/$BINARY_NAME (requires sudo)..."
-sudo mv "$TMP_BIN" "$INSTALL_DIR/$BINARY_NAME" \
+sudo mv "$TMP_DIR/riskc" "$INSTALL_DIR/$BINARY_NAME" \
   || error "Failed to install binary. Do you have sudo access?"
+rm -rf "$TMP_DIR"
 
 success "riskc installed to $INSTALL_DIR/$BINARY_NAME"
 
@@ -49,25 +51,6 @@ tar -xzf "$TMP_STD/stdlib.tar.gz" -C "$STDLIB_DIR" --strip-components=1
 rm -rf "$TMP_STD"
 
 success "Standard library installed to $STDLIB_DIR"
-
-info "Compiling standard library..."
-MANIFEST="$STDLIB_DIR/manifest"
-if [ ! -f "$MANIFEST" ]; then
-  error "Stdlib manifest not found at $MANIFEST"
-fi
-
-while IFS= read -r line || [ -n "$line" ]; do
-  [[ -z "$line" || "$line" == \#* ]] && continue
-  TARGET="$STDLIB_DIR/$line"
-  if [ ! -f "$TARGET" ]; then
-    info "Warning: $TARGET not found, skipping"
-    continue
-  fi
-  info "  compiling $line..."
-  riskc "$TARGET" || error "Failed to compile $line"
-done < "$MANIFEST"
-
-success "Standard library compiled"
 
 if command -v riskc &>/dev/null; then
   success "riskc is ready. Run: riskc --version"
