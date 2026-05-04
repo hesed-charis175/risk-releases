@@ -74,7 +74,6 @@ done < "$MANIFEST"
 
 success "Standard library compiled"
 
-# Set RISK_STDLIB system-wide
 if ! grep -qF "RISK_STDLIB" /etc/environment 2>/dev/null; then
   echo "RISK_STDLIB=$STDLIB_DIR" | $SUDO tee -a /etc/environment > /dev/null
   info "RISK_STDLIB set in /etc/environment"
