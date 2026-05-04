@@ -54,7 +54,6 @@ nav {
   z-index: 100;
   background: rgba(11,12,14,0.92);
   backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
   padding: 0 2rem;
   height: 56px;
   display: flex;
