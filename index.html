@@ -336,7 +336,6 @@
       <a href="#func-decl"   class="sub">Declaration & Definition</a>
       <a href="#func-ptrs"        class="sub">Function Pointers</a>
       <a href="#typealiases"             class="sub">Type Aliases</a>
-      <a href="#lambdas"         class="sub">Lambda / Closure Functions</a>
       <a href="#structures">Structures</a>
       <a href="#opts">Opts (Enumerations)</a>
       <a href="#operators">Operators</a>
@@ -1135,28 +1134,6 @@ x: CallbackI8ToStr = someValidFunc; <span class="cmt">// cleaner than the full s
 y: str;     <span class="cmt">// valid</span>
 z: <span class="ty">string</span>; <span class="cmt">// also valid — aliases are purely syntactic</span></pre>
 
-    <h3 class="sub-title" id="lambdas">Lambda / Closure Functions</h3>
-    <p>
-      Risk supports anonymous function literals (lambdas). A lambda is defined inline with a
-      capture clause (<code>(...)</code> for capturing the environment) followed by a parameter list
-      in brackets and a braced body. Lambdas can be stored in function-pointer variables and called
-      by name.
-    </p>
-
-<pre><span class="cmt">// No-parameter lambda</span>
-greet: <span class="kw">func</span>() -&gt; <span class="ty">void</span> = (...)[]{
-    <span class="fn">println</span>(<span class="str">"Hello World!!!"</span>);
-};
-<span class="fn">greet</span>();
-
-<span class="cmt">// Lambda with parameters</span>
-add: <span class="kw">func</span>(<span class="ty">i32</span>, <span class="ty">i32</span>) -&gt; <span class="ty">i32</span> = (...)[a: <span class="ty">i32</span>, b: <span class="ty">i32</span>] {
-    <span class="kw">return</span> a + b;
-};
-res: <span class="ty">i32</span> = <span class="fn">add</span>(1, 2); <span class="cmt">// 3</span></pre>
-  </section>
-
-  <!-- ══════════════════════════════════════ 6. STRUCTURES -->
   <section id="structures">
     <h2 class="section-title">Structures</h2>
 
