@@ -15,7 +15,7 @@ This installs `riskc` to `/usr/local/bin` and the standard library to `~/.risk/l
 ## Usage
 
 ```bash
-riskc path/to/file.risk
+riskc path/to/file.risk -o executable
 ```
 
 ## Docs
