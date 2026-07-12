@@ -336,6 +336,7 @@
       <a href="#func-decl"   class="sub">Declaration & Definition</a>
       <a href="#func-ptrs"        class="sub">Function Pointers</a>
       <a href="#typealiases"             class="sub">Type Aliases</a>
+      <a href="#lambdas"         class="sub">Lambda / Closure Functions</a>
       <a href="#structures">Structures</a>
       <a href="#opts">Opts (Enumerations)</a>
       <a href="#operators">Operators</a>
@@ -393,41 +394,6 @@
     </div>
   </div>
 
-  <!-- ══════════════════════════════════════ 1. INTRO -->
-   <section id="intro">
-    <h2 class="section-title">Introduction to Risk</h2>
-
-    <p>
-      Risk is a systems-level programming language with a static type system, explicit
-      memory management, and a rather convenient set of built-in functions (I hope it is). It suits domains where predictable performance, precise resource control,
-      and low-level memory access are important constraints.
-    </p>
-	<div class="callout note">
-		  <span class="callout-icon">ℹ</span>
-		  <div class="callout-body">
-		  <strong>Scope of this documentation</strong>
-		  Risk has two development branches each with a compiler. riskc and riskavr (For Avr chips).
-		  There are many major differences between the two. For example, riskc has no issue allocating on heap, while riskavr with its target chips will either return a linker error or crash with heap.
-		  This documentation is only for <bold>riskc</bold>
-	  </div>
-	  </div>
-
-    <p>
-      Risk source files use the <code>.risk</code> extension (Yeah, kinda lazy when it comes to finding names, you will soon understand why). I designed the language so that every
-      variable's type is known at compile time and every allocation is visible in the source code, meaning there is no hidden garbage collector and implicit boxing. :) At the same time, Risk comes with a
-      "rather convenient" (again) standard library covering I/O, string manipulation, file access, math, randomness, and
-      timing.
-    </p>
-
-    <div class="callout note">
-      <span class="callout-icon">ℹ</span>
-      <div class="callout-body">
-        <strong>Design philosophy</strong>
-        Risk aims to be explicit (type annotations on variable declarations, well specified casts, clearly stated pointer operations) without being too verbose, so reading a piece of Risk code tells you exactly what is happening in memory, and if your code screws up, you know i ain't doing anything in background. Your code looks like you, Period.
-      </div>
-    </div>
-  </section>
-
  <!-- ══════════════════════════════════════ 2. PRIMITIVES -->
   <section id="primitives">
     <h2 class="section-title">Primitive Types</h2>
@@ -465,7 +431,7 @@
       </table>
     </div>
 
-<pre><span class="cmt">// Variable declarations with explicit integer types</span>
+<pre>
 a: <span class="ty">i32</span> = <span class="num">-42;</span>
 b: <span class="ty">u8</span>  = <span class="num">255;</span>
 c: <span class="ty">i64</span> = <span class="num">9259034215553;</span>
@@ -1019,6 +985,37 @@ score[<span class="str">"alice"</span>] = 100;
 
 res: <span class="ty">i32</span> = <span class="fn">add</span>(5, 2); <span class="cmt">// 7</span></pre>
 
+    <h4 class="mini-title">The <code>noalias</code> Parameter Qualifier</h4>
+    <p>
+      The <code>noalias</code> keyword can be applied to any pointer parameter to assert that no
+      other pointer in scope points to the same memory. This is a promise from the programmer — the
+      compiler does not verify it — but it enables the C backend to emit <code>restrict</code>-qualified
+      parameters, which allows the C compiler to apply loop vectorization and other optimizations
+      it would otherwise have to skip due to potential aliasing.
+    </p>
+    <p>
+      This is especially relevant for numeric kernels (matrix multiplication, convolution, etc.)
+      where the source and destination buffers are always distinct.
+    </p>
+
+<pre><span class="kw">func</span> <span class="fn">vec_add</span>(noalias dst: <span class="ty">ptr</span>&lt;<span class="ty">f32</span>&gt;, noalias a: <span class="ty">ptr</span>&lt;<span class="ty">f32</span>&gt;, noalias b: <span class="ty">ptr</span>&lt;<span class="ty">f32</span>&gt;, n: <span class="ty">i32</span>) -&gt; <span class="ty">void</span> {
+    i: <span class="ty">i32</span> = 0;
+    <span class="kw">while</span> (i &lt; n) {
+        dst[i] = a[i] + b[i];
+        i = i + 1;
+    }
+}
+</pre>
+
+    <div class="callout warning">
+      <span class="callout-icon">⚠</span>
+      <div class="callout-body">
+        <strong>Programmer's responsibility</strong>
+        Passing overlapping buffers to a <code>noalias</code> parameter is undefined behaviour.
+        The compiler will not catch it.
+      </div>
+    </div>
+
     <h3 class="sub-title" id="func-ptrs">Function Pointers</h3>
     <p>
       A function pointer stores the address of a function with a specific signature and can be
@@ -1134,6 +1131,28 @@ x: CallbackI8ToStr = someValidFunc; <span class="cmt">// cleaner than the full s
 y: str;     <span class="cmt">// valid</span>
 z: <span class="ty">string</span>; <span class="cmt">// also valid — aliases are purely syntactic</span></pre>
 
+    <h3 class="sub-title" id="lambdas">Lambda / Closure Functions</h3>
+    <p>
+      Risk supports anonymous function literals (lambdas). A lambda is defined inline with a
+      capture clause (<code>(...)</code> for capturing the environment) followed by a parameter list
+      in brackets and a braced body. Lambdas can be stored in function-pointer variables and called
+      by name.
+    </p>
+
+<pre><span class="cmt">// No-parameter lambda</span>
+greet: <span class="kw">func</span>() -&gt; <span class="ty">void</span> = (...)[]{
+    <span class="fn">println</span>(<span class="str">"Hello World!!!"</span>);
+};
+<span class="fn">greet</span>();
+
+<span class="cmt">// Lambda with parameters</span>
+add: <span class="kw">func</span>(<span class="ty">i32</span>, <span class="ty">i32</span>) -&gt; <span class="ty">i32</span> = (...)[a: <span class="ty">i32</span>, b: <span class="ty">i32</span>] {
+    <span class="kw">return</span> a + b;
+};
+res: <span class="ty">i32</span> = <span class="fn">add</span>(1, 2); <span class="cmt">// 3</span></pre>
+  </section>
+
+  <!-- ══════════════════════════════════════ 6. STRUCTURES -->
   <section id="structures">
     <h2 class="section-title">Structures</h2>
 
@@ -1594,7 +1613,7 @@ x: <span class="ty">i32</span> = f.<span class="fn">compute</span>(10); <span cl
           <tr><td><code>println(v: any): void</code></td>  <td>Prints any value to stdout followed by a newline.</td>               <td><code>println("Hello, World!");</code></td></tr>
           <tr><td><code>rprint(v: any): void</code></td>   <td>Like <code>print</code> but interprets ANSI escape sequences.</td>   <td><code>rprint("\x1b[31mRed\x1b[0m");</code></td></tr>
           <tr><td><code>rprintln(v: any): void</code></td> <td>Like <code>rprint</code> but appends a newline.</td>                 <td><code>rprintln("\x1b[1mBold\x1b[0m");</code></td></tr>
-          <tr><td><code>input(): string</code></td>        <td>Reads one line from stdin, strips the trailing newline. Returns an empty string on EOF.</td> <td><code>let name = input();</code></td></tr>
+          <tr><td><code>input(): string</code></td>        <td>Reads one line from stdin, strips the trailing newline. Returns an empty string on EOF.</td> <td><code>name: string = input();</code></td></tr>
           <tr><td><code>clrscr(): void</code></td>         <td>Clears the terminal screen.</td>                                     <td><code>clrscr();</code></td></tr>
           <tr><td><code>flush_stdout(): void</code></td>   <td>Flushes the stdout buffer, forcing all pending output to appear in the terminal immediately. Required after <code>print</code> calls in TUI or game loops where you need the full frame to land at once rather than trickle out across OS scheduling windows.</td> <td><code>print("frame..."); flush_stdout();</code></td></tr>
         </tbody>
@@ -1898,6 +1917,8 @@ i: <span class="ty">i32</span> = <span class="num">0</span>;
       </table>
     </div>
   </section>
+
+  <!-- rc<T> -->
   <section id="type-cheatsheet">
     <h2 class="section-title">Type Cheat Sheet</h2>
     <div class="tbl-wrap">
